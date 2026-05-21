@@ -83,10 +83,10 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search transactions…"
-          className="h-11 w-full rounded-sm border border-[var(--border)] bg-[var(--bg)] px-4 pl-10 text-sm text-[var(--text)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
+          className="h-11 w-full rounded-sm border border-(--border) bg-(--bg) px-4 pl-10 text-sm text-(--text) outline-none transition-colors placeholder:text-(--text-muted) focus:border-(--accent)"
         />
         <svg
-          className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"
+          className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-(--text-muted)"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -97,7 +97,7 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
         {query && (
           <button
             onClick={() => setQuery("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)] active:scale-[0.96]"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-muted) transition-colors hover:text-(--text-secondary) active:scale-[0.96]"
             aria-label="Clear search"
             type="button"
           >
@@ -134,19 +134,19 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
       </div>
 
       {/* Sort + count toolbar */}
-      <div className="mt-3 flex items-center justify-between border-b border-[var(--border)] pb-2">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)]">
+      <div className="mt-3 flex items-center justify-between border-b border-(--border) pb-2">
+        <span className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
           {filtered.length} transaction{filtered.length !== 1 ? "s" : ""}
         </span>
-        <div className="flex items-center gap-1">
+        <div className="inline-flex items-center gap-1 border border-(--border) bg-(--surface) p-0.5">
           {(["date-desc", "date-asc", "amount-desc", "amount-asc"] as const).map((s) => (
             <button
               key={s}
               onClick={() => setSort(s)}
-              className={`rounded-sm px-2 py-1 text-[10px] font-medium uppercase tracking-wider transition-colors active:scale-[0.96] ${
+              className={`px-1.5 py-px text-[10px] font-medium uppercase tracking-wider active:scale-[0.96] transition-colors cursor-pointer ${
                 sort === s
-                  ? "bg-[var(--accent)] text-white"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+                  ? "bg-(--accent) text-white  hover:bg-(--accent)/90"
+                  : "text-(--text-muted) hover:text-(--text-secondary) hover:bg-(--surface-hover)"
               }`}
               type="button"
             >
@@ -173,15 +173,15 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
                     duration: 0.3,
                     ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
                   }}
-                  className="group flex items-start justify-between gap-3 border-b border-[var(--border)] py-3 transition-colors last:border-b-0 hover:bg-[var(--surface-hover)]"
+                  className="group flex items-start justify-between gap-3 border-b border-(--border) py-3 transition-colors last:border-b-0 hover:bg-(--surface-hover)"
                 >
                   <div className="min-w-0 px-2">
-                    <dt className="truncate text-sm font-medium text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">
+                    <dt className="truncate text-sm font-medium text-(--text) transition-colors group-hover:text-(--accent)">
                       {transaction.name}
                     </dt>
-                    <dd className="mt-1 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+                    <dd className="mt-1 flex items-center gap-1.5 text-xs text-(--text-muted)">
                       <span>{transaction.date}</span>
-                      <span className="text-[var(--border)]">·</span>
+                      <span className="text-(--border)">·</span>
                       <span
                         className="inline-flex items-center gap-1 px-1 py-0.5 text-[10px] font-medium uppercase tracking-wide"
                         style={{
@@ -201,7 +201,7 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
                   </div>
                   <data
                     value={Math.abs(transaction.amount)}
-                    className="shrink-0 px-2 font-mono text-sm font-medium tabular-nums text-[var(--text)]"
+                    className="shrink-0 px-2 font-mono text-sm font-medium tabular-nums text-(--text)"
                   >
                     {numberFormatter.format(Math.abs(transaction.amount))}
                   </data>
@@ -214,7 +214,7 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
               animate={{ opacity: 1 }}
               className="flex h-40 items-center justify-center"
             >
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-sm text-(--text-muted)">
                 {hasFilters ? "No transactions match your filters." : "No transactions in this range."}
               </p>
             </motion.div>

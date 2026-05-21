@@ -27,12 +27,12 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="inline-flex items-center gap-1 rounded-sm border border-(--border) bg-(--surface) p-0.5">
+    <div className="inline-flex items-center gap-1 border border-(--border) bg-(--surface) p-0.5">
       {(["light", "dark", "system"] as const).map((t) => (
         <button
           key={t}
           onClick={() => setTheme(t)}
-          className={`flex items-center justify-center rounded-sm p-1.5 transition-colors ${
+          className={`flex items-center justify-center p-1.5 transition-colors ${
             theme === t
               ? "bg-(--accent) text-white"
               : "text-(--text-muted) hover:text-(--text-secondary)"

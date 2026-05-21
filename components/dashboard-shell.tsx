@@ -89,21 +89,25 @@ export function DashboardShell({ data }: { data: DashboardData }) {
         className="flex flex-col gap-6 border-b border-(--border) pb-8 md:flex-row md:items-end md:justify-between"
       >
         <div className="max-w-2xl">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-normal tracking-wide text-(--accent) uppercase">
+          <h1 className="mt-3 text-5xl tracking-tight leading-tight text-(--text) sm:text-6xl">
+            Dashboard
+          </h1>
+          <div className="flex items-baseline gap-1">
+            {/* <span className="text-xs font-normal tracking-wide text-(--accent) uppercase">
               {data.notion.dataSourceName}
             </span>
-            <span className="h-px w-6 bg-(--border)" />
+            <span className="h-px w-6 bg-(--border)" /> */}
+            <p className="mt-2 text-sm text-(--text-secondary)">
+              Data from {data.notion.databaseName}
+            </p>
+             · 
             <span className="font-mono text-xs tabular-nums text-(--text-muted)">
               {data.range.start} — {data.range.end}
             </span>
           </div>
-          <h1 className="mt-3 text-5xl font-light tracking-tight leading-tight text-(--text) sm:text-6xl">
-            Dashboard
-          </h1>
-          <p className="mt-2 text-sm text-(--text-secondary)">
+          {/* <p className="mt-2 text-sm text-(--text-secondary)">
             Data from {data.notion.databaseName}
-          </p>
+          </p> */}
         </div>
         <div className="flex items-center">
           <ThemeToggle />
@@ -274,12 +278,12 @@ function FilterToolbar({
     draft.end !== currentRange.end;
 
   return (
-    <div className="border border-(--border) bg-(--surface) p-4 sm:p-5">
+    <div className="border border-(--border) bg-(--surface) p-2 sm:p-3">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         {/* Left: presets + dates */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
           {/* Presets */}
-          <div className="inline-flex items-center gap-1 rounded-sm border border-(--border) bg-(--bg) p-0.5">
+          <div className="inline-flex items-center gap-1 border border-(--border) bg-(--bg) p-0.5">
             <Tabs.Root
               onValueChange={(value) => setPreset(value as RangePreset)}
               value={draft.preset}
@@ -287,7 +291,7 @@ function FilterToolbar({
               <Tabs.List className="flex gap-1">
                 {presets.map((preset) => (
                   <Tabs.Tab
-                    className="rounded-sm px-3 py-2 text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-[active]:bg-(--accent) data-[active]:text-white"
+                    className="px-3 py-1.75 text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-active:bg-(--accent) data-active:text-white"
                     key={preset.value}
                     value={preset.value}
                   >
@@ -295,7 +299,7 @@ function FilterToolbar({
                   </Tabs.Tab>
                 ))}
                 <Tabs.Tab
-                  className="rounded-sm px-3 py-2 text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-[active]:bg-(--accent) data-[active]:text-white"
+                  className="px-3 py-1.75 text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-active:bg-(--accent) data-active:text-white"
                   value="custom"
                 >
                   Custom
@@ -356,11 +360,11 @@ function FilterToolbar({
 
 function MetricLarge({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col justify-between border border-(--border) bg-(--surface) p-6 transition-colors hover:border-(--border-strong) sm:p-8 md:p-10">
+    <div className="flex flex-col justify-between border border-(--border) bg-(--surface) p-6 sm:p-8">
       <p className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
         {label}
       </p>
-      <p className="mt-8 font-mono text-5xl font-light tracking-tight leading-none text-(--text) sm:text-6xl md:text-7xl">
+      <p className="mt-8 font-mono text-5xl font-normal tracking-tight leading-none text-(--text) sm:text-6xl md:text-7xl">
         {value}
       </p>
     </div>
@@ -369,11 +373,11 @@ function MetricLarge({ label, value }: { label: string; value: string }) {
 
 function MetricSmall({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-1 flex-col justify-center border border-(--border) bg-(--surface) p-6 transition-colors hover:border-(--border-strong) sm:p-8">
+    <div className="flex flex-1 flex-col justify-center border border-(--border) bg-(--surface) p-6 sm:p-8">
       <p className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
         {label}
       </p>
-      <p className="mt-4 font-mono text-4xl font-light tracking-tight leading-tight text-(--text) sm:text-5xl">
+      <p className="mt-4 font-mono text-4xl font-normal tracking-tight leading-tight text-(--text) sm:text-5xl">
         {value}
       </p>
     </div>
