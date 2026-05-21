@@ -1,7 +1,11 @@
 import "server-only";
 
 import { cache } from "react";
-import { classifyTransactions } from "@/lib/ai";
+import { classifyTransactions, generateInsights } from "@/lib/ai";
+import {
+  getBudgetConfig,
+  getBudgetStatus,
+} from "@/lib/budgets";
 import {
   aggregateCategorySpend,
   aggregateDailySpend,
@@ -87,19 +91,62 @@ export async function getDashboardData(range: DateRange): Promise<DashboardData>
     0,
   );
 
+  const categorySpend = aggregateCategorySpend(filteredTransactions);
+  const dailySpend = aggregateDailySpend(filteredTransactions, range);
+
+  // Budgets
+  const budgetConfig = getBudgetConfig();
+  const budgets = categorySpend.map((cs) => {
+    const budget = budgetConfig[cs.category] ?? 0;
+    const { state, percent } = getBudgetStatus(cs.amount, budget);
+    return {
+      category: cs.category,
+      spent: cs.amount,
+      budget,
+      status: state,
+      percent,
+    };
+  });
+
+  // AI Insights
+  let insights: DashboardData["insights"] = [];
+  if (env.geminiApiKey && filteredTransactions.length > 0) {
+    try {
+      insights = await generateInsights({
+        apiKey: env.geminiApiKey,
+        model: env.geminiModel,
+        data: {
+          total,
+          transactionCount: filteredTransactions.length,
+          range,
+          categorySpend,
+          dailySpend,
+          budgets,
+        },
+      });
+    } catch {
+      insights = [];
+    }
+  }
+
+  const publicTransactions = filteredTransactions.map((transaction) => ({
+    id: transaction.id,
+    name: transaction.name,
+    amount: transaction.amount,
+    date: transaction.date,
+    category: transaction.category,
+  }));
+
   return {
     range,
     total,
     transactionCount: filteredTransactions.length,
-    dailySpend: aggregateDailySpend(filteredTransactions, range),
-    categorySpend: aggregateCategorySpend(filteredTransactions),
-    recentTransactions: filteredTransactions.slice(0, 8).map((transaction) => ({
-      id: transaction.id,
-      name: transaction.name,
-      amount: transaction.amount,
-      date: transaction.date,
-      category: transaction.category,
-    })),
+    dailySpend,
+    categorySpend,
+    recentTransactions: publicTransactions.slice(0, 8),
+    allTransactions: publicTransactions,
+    budgets,
+    insights,
     ai: {
       configured: Boolean(env.geminiApiKey),
       classifiedCount,

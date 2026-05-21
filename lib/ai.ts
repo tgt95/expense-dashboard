@@ -1,7 +1,7 @@
 import "server-only";
 
 import { GoogleGenAI } from "@google/genai";
-import { CATEGORIES, type ExpenseCategory, type ExpenseTransaction } from "@/lib/types";
+import { CATEGORIES, type BudgetItem, type DailySpend, type ExpenseCategory, type ExpenseTransaction, type SpendingInsight } from "@/lib/types";
 
 type ClassificationInput = Pick<ExpenseTransaction, "id" | "name" | "amount" | "date" | "rawEmail">;
 
@@ -146,4 +146,110 @@ function clampConfidence(confidence: number | undefined) {
   }
 
   return Math.max(0, Math.min(1, confidence));
+}
+
+type InsightInput = {
+  total: number;
+  transactionCount: number;
+  range: { start: string; end: string };
+  categorySpend: Array<{ category: ExpenseCategory; amount: number; count: number }>;
+  dailySpend: DailySpend[];
+  budgets: BudgetItem[];
+};
+
+const insightSchema = {
+  type: "object",
+  properties: {
+    insights: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          type: {
+            type: "string",
+            enum: ["trend", "anomaly", "suggestion", "budget"],
+          },
+          text: { type: "string" },
+        },
+        required: ["id", "type", "text"],
+      },
+    },
+  },
+  required: ["insights"],
+};
+
+export async function generateInsights({
+  apiKey,
+  model,
+  data,
+}: {
+  apiKey: string;
+  model: string;
+  data: InsightInput;
+}): Promise<SpendingInsight[]> {
+  const ai = new GoogleGenAI({ apiKey });
+
+  const topDays = [...data.dailySpend].sort((a, b) => b.amount - a.amount).slice(0, 3);
+  const prevWeekEstimate = data.total * 0.85; // naive baseline for comparison prompt
+
+  const prompt = [
+    "You are a concise personal finance analyst. Analyze the user's spending data and return exactly 2–4 short insights.",
+    "Each insight must be one sentence, actionable, and specific to the data.",
+    "Allowed types: trend (spending pattern), anomaly (unusual change), suggestion (actionable tip), budget (budget status).",
+    "Do not hallucate data. If there is not enough information, return fewer insights.",
+    "Return IDs as short slugs like 'insight-1', 'insight-2'.",
+    "",
+    "Data:",
+    `Range: ${data.range.start} to ${data.range.end}`,
+    `Total: ${Math.round(data.total)} across ${data.transactionCount} transactions`,
+    `Top days: ${topDays.map((d) => `${d.label} (${Math.round(d.amount)})`).join(", ")}`,
+    `Categories: ${data.categorySpend
+      .map((c) => `${c.category}: ${Math.round(c.amount)} (${c.count} tx)`)
+      .join(", ")}`,
+    `Budgets: ${data.budgets
+      .filter((b) => b.budget > 0)
+      .map((b) => `${b.category}: ${Math.round(b.spent)}/${Math.round(b.budget)}`)
+      .join(", ")}`,
+    `Estimated prior week total: ${Math.round(prevWeekEstimate)} (use only for comparison, do not mention the estimate itself)`,
+    "",
+    "Return JSON.",
+  ].join("\n");
+
+  try {
+    const response = await ai.models.generateContent({
+      model,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseJsonSchema: insightSchema,
+      },
+    });
+
+    const parsed = JSON.parse(response.text ?? "{}") as {
+      insights?: Array<{
+        id?: string;
+        type?: string;
+        text?: string;
+      }>;
+    };
+
+    return (parsed.insights ?? [])
+      .map((item, index) => ({
+        id: item.id || `insight-${index + 1}`,
+        type: normalizeInsightType(item.type),
+        text: (item.text || "").trim(),
+      }))
+      .filter((item) => item.text.length > 0)
+      .slice(0, 4);
+  } catch {
+    return [];
+  }
+}
+
+function normalizeInsightType(type: string | undefined): SpendingInsight["type"] {
+  if (type === "trend" || type === "anomaly" || type === "suggestion" || type === "budget") {
+    return type;
+  }
+  return "trend";
 }

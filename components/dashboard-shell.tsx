@@ -4,8 +4,11 @@ import { useMemo, useState, useTransition } from "react";
 import { Tabs } from "@base-ui/react/tabs";
 import { motion } from "motion/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { BudgetBars } from "@/components/budget-bars";
 import { CategoryPieChart, DailyColumnChart } from "@/components/charts";
+import { InsightsPanel } from "@/components/insights-panel";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { TransactionExplorer } from "@/components/transaction-list";
 import type { DashboardData, DateRange, RangePreset } from "@/lib/types";
 
 const numberFormatter = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });
@@ -91,7 +94,7 @@ export function DashboardShell({ data }: { data: DashboardData }) {
               {data.notion.dataSourceName}
             </span>
             <span className="h-px w-6 bg-[var(--border)]" />
-            <span className="font-mono text-xs text-[var(--text-muted)]">
+            <span className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
               {data.range.start} — {data.range.end}
             </span>
           </div>
@@ -107,7 +110,7 @@ export function DashboardShell({ data }: { data: DashboardData }) {
         </div>
       </motion.header>
 
-      {/* Filter Toolbar — card above metrics */}
+      {/* Filter Toolbar */}
       <motion.div variants={itemVariants} className="mt-8">
         <FilterToolbar
           currentRange={data.range}
@@ -118,12 +121,19 @@ export function DashboardShell({ data }: { data: DashboardData }) {
 
       {/* Metrics — asymmetric bento */}
       <motion.section variants={itemVariants} className="mt-8 grid gap-4 md:grid-cols-[1.5fr_1fr]">
-        <MetricLarge label="Total spend" value={numberFormatter.format(data.total)} />
+        <MetricLarge label="Total spend" value={numberFormatter.format(Math.round(data.total))} />
         <div className="flex flex-col gap-4">
           <MetricSmall label="Transactions" value={numberFormatter.format(data.transactionCount)} />
-          <MetricSmall label="Average" value={numberFormatter.format(average)} />
+          <MetricSmall label="Average" value={numberFormatter.format(Math.round(average))} />
         </div>
       </motion.section>
+
+      {/* AI Insights */}
+      {data.insights.length > 0 && (
+        <motion.section variants={itemVariants} className="mt-8">
+          <InsightsPanel insights={data.insights} />
+        </motion.section>
+      )}
 
       {/* Daily Spend */}
       <motion.section
@@ -148,66 +158,59 @@ export function DashboardShell({ data }: { data: DashboardData }) {
         </div>
       </motion.section>
 
-      {/* Bottom Grid: Category + Transactions */}
+      {/* Bottom Grid: Budgets + Category | Transactions */}
       <motion.section
         variants={itemVariants}
-        className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]"
+        className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_400px]"
       >
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
-          <h2 className="text-lg font-semibold tracking-tight text-[var(--text)]">
-            Category split
-          </h2>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Breakdown based on the Notion{" "}
-            <code className="rounded bg-[var(--accent-dim)] px-1.5 py-0.5 font-mono text-xs text-[var(--accent)]">
-              Category
-            </code>{" "}
-            property.
-          </p>
-          <div className="mt-5">
-            <CategoryPieChart data={data.categorySpend} />
+        <div className="flex flex-col gap-6">
+          {/* Budgets */}
+          {data.budgets.some((b) => b.budget > 0) && (
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold tracking-tight text-[var(--text)]">
+                    Budgets
+                  </h2>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                    Spend against monthly limits.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-5">
+                <BudgetBars budgets={data.budgets} />
+              </div>
+            </div>
+          )}
+
+          {/* Category split */}
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
+            <h2 className="text-lg font-semibold tracking-tight text-[var(--text)]">
+              Category split
+            </h2>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              Breakdown based on the Notion{" "}
+              <code className="rounded bg-[var(--accent-dim)] px-1.5 py-0.5 font-mono text-xs text-[var(--accent)]">
+                Category
+              </code>{" "}
+              property.
+            </p>
+            <div className="mt-5">
+              <CategoryPieChart data={data.categorySpend} />
+            </div>
           </div>
         </div>
 
+        {/* Transaction Explorer */}
         <aside className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
           <h2 className="text-lg font-semibold tracking-tight text-[var(--text)]">
-            Recent transactions
+            Transactions
           </h2>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Search, filter, and inspect every transaction.
+          </p>
           <div className="mt-5">
-            {data.recentTransactions.length > 0 ? (
-              <dl className="flex flex-col">
-                {data.recentTransactions.map((transaction, i) => (
-                  <motion.div
-                    key={transaction.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.15 + i * 0.04, duration: 0.4, ease: easeOut }}
-                    className="group flex items-start justify-between gap-3 border-b border-[var(--border)] py-3.5 transition-colors last:border-b-0 hover:bg-[var(--surface-hover)]"
-                  >
-                    <div className="min-w-0">
-                      <dt className="truncate text-sm font-medium text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">
-                        {transaction.name}
-                      </dt>
-                      <dd className="mt-1 text-xs text-[var(--text-muted)]">
-                        {transaction.date}
-                        <span className="mx-1.5 text-[var(--border)]">·</span>
-                        <span className="text-[var(--text-secondary)]">{transaction.category}</span>
-                      </dd>
-                    </div>
-                    <data
-                      value={Math.abs(transaction.amount)}
-                      className="shrink-0 font-mono text-sm font-medium tabular-nums text-[var(--text)]"
-                    >
-                      {numberFormatter.format(Math.abs(transaction.amount))}
-                    </data>
-                  </motion.div>
-                ))}
-              </dl>
-            ) : (
-              <div className="flex h-40 items-center justify-center rounded-lg border border-dashed border-[var(--border)]">
-                <p className="text-sm text-[var(--text-muted)]">No transactions in this range.</p>
-              </div>
-            )}
+            <TransactionExplorer transactions={data.allTransactions} />
           </div>
         </aside>
       </motion.section>
@@ -271,7 +274,7 @@ function FilterToolbar({
               <Tabs.List className="flex gap-1">
                 {presets.map((preset) => (
                   <Tabs.Tab
-                    className="rounded px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)] active:scale-[0.97] data-[active]:bg-[var(--surface)] data-[active]:text-[var(--text)]"
+                    className="rounded px-3 py-2.5 text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)] active:scale-[0.96] data-[active]:bg-[var(--surface)] data-[active]:text-[var(--text)]"
                     key={preset.value}
                     value={preset.value}
                   >
@@ -279,7 +282,7 @@ function FilterToolbar({
                   </Tabs.Tab>
                 ))}
                 <Tabs.Tab
-                  className="rounded px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)] active:scale-[0.97] data-[active]:bg-[var(--surface)] data-[active]:text-[var(--text)]"
+                  className="rounded px-3 py-2.5 text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)] active:scale-[0.96] data-[active]:bg-[var(--surface)] data-[active]:text-[var(--text)]"
                   value="custom"
                 >
                   Custom
@@ -295,7 +298,7 @@ function FilterToolbar({
                 Start
               </label>
               <input
-                className="mt-1 block h-10 w-full appearance-none rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+                className="mt-1 block h-11 w-full appearance-none rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
                 onChange={(event) =>
                   setDraft({ preset: "custom", start: event.target.value, end: draft.end })
                 }
@@ -308,7 +311,7 @@ function FilterToolbar({
                 End
               </label>
               <input
-                className="mt-1 block h-10 w-full appearance-none rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+                className="mt-1 block h-11 w-full appearance-none rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
                 onChange={(event) =>
                   setDraft({ preset: "custom", start: draft.start, end: event.target.value })
                 }
@@ -322,7 +325,7 @@ function FilterToolbar({
         {/* Right: CTAs */}
         <div className="flex items-center gap-3">
           {/* Status indicator */}
-          <div className="flex h-10 items-center rounded-full border border-[var(--border)] bg-[var(--bg)] px-4 text-[11px] font-medium text-[var(--text-muted)]">
+          <div className="flex h-11 items-center rounded-full border border-[var(--border)] bg-[var(--bg)] px-4 text-[11px] font-medium text-[var(--text-muted)]">
             {isPending ? (
               <span className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--accent)]" />
@@ -337,17 +340,17 @@ function FilterToolbar({
           <button
             onClick={handleReset}
             disabled={!hasChanges || isPending}
-            className="h-10 rounded-lg border border-[var(--border)] px-4 text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--text-secondary)] disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[var(--text-muted)] active:scale-[0.97]"
+            className="h-11 rounded-lg border border-[var(--border)] px-4 text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--text-secondary)] disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[var(--text-muted)] active:scale-[0.96]"
             type="button"
           >
             Reset
           </button>
 
-          {/* Apply — primary CTA */}
+          {/* Apply */}
           <button
             onClick={handleApply}
             disabled={!hasChanges || isPending}
-            className="h-10 rounded-md bg-[var(--text)] px-5 text-[11px] font-medium uppercase tracking-wider text-[var(--bg)] transition-colors hover:bg-[var(--text-secondary)] disabled:opacity-40 active:scale-[0.97]"
+            className="h-11 rounded-md bg-[var(--text)] px-5 text-[11px] font-medium uppercase tracking-wider text-[var(--bg)] transition-colors hover:bg-[var(--text-secondary)] disabled:opacity-40 active:scale-[0.96]"
             type="button"
           >
             Apply

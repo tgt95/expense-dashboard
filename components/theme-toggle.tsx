@@ -3,7 +3,7 @@
 import { useTheme } from "./theme-provider";
 
 export function ThemeToggle() {
-  const { theme, resolved, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] bg-[var(--surface)] p-0.5">

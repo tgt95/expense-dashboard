@@ -29,12 +29,24 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 const numberFormatter = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });
 
-function CustomTooltip({ active, payload, label }: any) {
+interface TooltipPayloadItem {
+  value?: number | string;
+}
+
+function CustomTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: TooltipPayloadItem[];
+  label?: string;
+}) {
   if (!active || !payload || !payload.length) return null;
   return (
     <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-3 shadow-sm">
       {label && <p className="mb-1 text-xs text-[var(--text-muted)]">{label}</p>}
-      {payload.map((entry: any, index: number) => (
+      {payload.map((entry, index: number) => (
         <p key={index} className="font-mono text-sm font-medium tabular-nums text-[var(--text)]">
           {numberFormatter.format(Number(entry.value))}
         </p>

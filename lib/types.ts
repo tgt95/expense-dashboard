@@ -41,6 +41,20 @@ export type CategorySpend = {
   count: number;
 };
 
+export type BudgetItem = {
+  category: ExpenseCategory;
+  spent: number;
+  budget: number;
+  status: "ok" | "warning" | "over" | "none";
+  percent: number;
+};
+
+export type SpendingInsight = {
+  id: string;
+  type: "trend" | "anomaly" | "suggestion" | "budget";
+  text: string;
+};
+
 export type DashboardData = {
   range: DateRange;
   total: number;
@@ -48,6 +62,9 @@ export type DashboardData = {
   dailySpend: DailySpend[];
   categorySpend: CategorySpend[];
   recentTransactions: Array<Omit<ExpenseTransaction, "rawEmail">>;
+  allTransactions: Array<Omit<ExpenseTransaction, "rawEmail">>;
+  budgets: BudgetItem[];
+  insights: SpendingInsight[];
   ai: {
     configured: boolean;
     classifiedCount: number;

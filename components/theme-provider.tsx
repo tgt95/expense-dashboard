@@ -16,27 +16,31 @@ const ThemeContext = createContext<ThemeContextType>({
   setTheme: () => {},
 });
 
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") return "system";
+  const saved = localStorage.getItem("theme") as Theme | null;
+  if (saved && ["light", "dark", "system"].includes(saved)) {
+    return saved;
+  }
+  return "system";
+}
+
+function getResolvedTheme(theme: Theme): "light" | "dark" {
+  if (theme !== "system") return theme;
+  if (typeof window === "undefined") return "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
-  const [resolved, setResolved] = useState<"light" | "dark">("light");
-  const [mounted, setMounted] = useState(false);
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+  const [resolved, setResolved] = useState<"light" | "dark">(() => getResolvedTheme(getInitialTheme()));
 
   useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem("theme") as Theme | null;
-    if (saved && ["light", "dark", "system"].includes(saved)) {
-      setThemeState(saved);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
     const root = document.documentElement;
     const mql = window.matchMedia("(prefers-color-scheme: dark)");
 
     const resolve = () => {
-      const resolvedTheme = theme === "system" ? (mql.matches ? "dark" : "light") : theme;
+      const resolvedTheme = getResolvedTheme(theme);
       setResolved(resolvedTheme);
       root.setAttribute("data-theme", resolvedTheme);
     };
@@ -44,7 +48,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     resolve();
     mql.addEventListener("change", resolve);
     return () => mql.removeEventListener("change", resolve);
-  }, [theme, mounted]);
+  }, [theme]);
 
   const setTheme = (next: Theme) => {
     setThemeState(next);
