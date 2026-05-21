@@ -45,7 +45,7 @@ export function BudgetBars({ budgets }: { budgets: BudgetItem[] }) {
 
   if (activeBudgets.length === 0) {
     return (
-      <div className="flex h-40 items-center justify-center rounded-xl border border-dashed border-[var(--border)]">
+      <div className="flex h-40 items-center justify-center border border-dashed border-[var(--border)]">
         <p className="text-sm text-[var(--text-muted)]">No budgets configured.</p>
       </div>
     );
@@ -74,7 +74,7 @@ export function BudgetBars({ budgets }: { budgets: BudgetItem[] }) {
             <div className="flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-2">
                 <span
-                  className="h-2 w-2 shrink-0 rounded-full"
+                  className="h-2 w-2 shrink-0"
                   style={{ backgroundColor: CATEGORY_COLORS[item.category] ?? CATEGORY_COLORS.Other }}
                 />
                 <span className="truncate text-sm font-medium text-[var(--text)]">
@@ -95,9 +95,9 @@ export function BudgetBars({ budgets }: { budgets: BudgetItem[] }) {
                 )}
               </div>
             </div>
-            <div className={`mt-2 h-1.5 w-full overflow-hidden rounded-full ${styles.track}`}>
+            <div className={`mt-2 h-1.5 w-full overflow-hidden ${styles.track}`}>
               <motion.div
-                className={`h-full rounded-full ${styles.bar}`}
+                className={`h-full ${styles.bar}`}
                 initial={{ width: 0 }}
                 animate={{ width: `${Math.min(100, overPercent)}%` }}
                 transition={{

@@ -44,7 +44,7 @@ function CustomTooltip({
 }) {
   if (!active || !payload || !payload.length) return null;
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-3 shadow-sm">
+    <div className="border border-[var(--border)] bg-[var(--surface)] p-3 shadow-sm">
       {label && <p className="mb-1 text-xs text-[var(--text-muted)]">{label}</p>}
       {payload.map((entry, index: number) => (
         <p key={index} className="font-mono text-sm font-medium tabular-nums text-[var(--text)]">
@@ -80,7 +80,7 @@ export function DailyColumnChart({ data }: { data: DailySpend[] }) {
             width={64}
           />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: "var(--border)", opacity: 0.3 }} />
-          <Bar dataKey="amount" fill="var(--accent)" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="amount" fill="var(--accent)" radius={[0, 0, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -126,7 +126,7 @@ export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
           <div className="group flex items-center justify-between gap-3 text-sm" key={item.category}>
             <span className="flex min-w-0 items-center gap-2.5 text-[var(--text-secondary)] transition-colors group-hover:text-[var(--text)]">
               <span
-                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                className="h-2.5 w-2.5 shrink-0"
                 style={{
                   backgroundColor: CATEGORY_COLORS[item.category] ?? CATEGORY_COLORS.Other,
                 }}
@@ -145,14 +145,14 @@ export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
 
 function EmptyChart({ label }: { label: string }) {
   return (
-    <div className="flex h-80 items-center justify-center rounded-xl border border-dashed border-[var(--border)] text-sm text-[var(--text-muted)]">
+    <div className="flex h-80 items-center justify-center border border-dashed border-[var(--border)] text-sm text-[var(--text-muted)]">
       {label}
     </div>
   );
 }
 
 function ChartShell() {
-  return <div className="h-80 w-full rounded-xl bg-[var(--surface)]" />;
+  return <div className="h-80 w-full bg-[var(--surface)]" />;
 }
 
 function useMounted() {

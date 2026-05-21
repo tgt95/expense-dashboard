@@ -1,36 +1,31 @@
 import type { Metadata, Viewport } from "next";
-import { Newsreader, Geist, Geist_Mono } from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const newsreader = Newsreader({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  display: "swap",
-  style: ["normal", "italic"],
-  weight: ["300", "400", "500", "600"],
-});
-
-const geistSans = Geist({
+const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
 });
 
-const geistMono = Geist_Mono({
+const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   display: "swap",
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "Expense Dashboard",
+  title: "Dashboard",
   description: "Notion-backed expense dashboard with AI transaction categorization.",
 };
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
-  themeColor: "#FBFBFA",
+  themeColor: "#fafaf9",
 };
 
 export default function RootLayout({
@@ -41,12 +36,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${newsreader.variable} ${geistSans.variable} ${geistMono.variable}`}
+      className={`${plexSans.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
         <ThemeProvider>
-          <div className="ambient-light" />
           <div className="relative z-[1]">{children}</div>
         </ThemeProvider>
       </body>

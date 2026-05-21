@@ -1,83 +1,91 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --font-serif: var(--font-serif), ui-serif, Georgia, Cambria, "Times New Roman", serif;
-  --font-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: 'IBM Plex Sans', 'Hanken Grotesk', 'Barlow', 'Host Grotesk', 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Fira Code', ui-monospace, monospace;
+
+  --max-width-prose: 60ch;
+  --max-width-prose-wide: 72ch;
+
+  --line-height-display: 1;
+  --line-height-heading: 1.15;
+
+  --letter-spacing-display: -0.02em;
+  --letter-spacing-label: 0.08em;
 }
 
-/* Light theme (default) — Warm monochrome + spot pastels */
-:root,
-[data-theme="light"] {
+/* Swiss Design System — Stone palette */
+:root {
   color-scheme: light;
 
   /* Canvas */
-  --bg: #FBFBFA;
-  --surface: #FFFFFF;
-  --surface-hover: #F7F6F3;
-
-  /* Text */
-  --text: #2F3437;
-  --text-secondary: #787774;
-  --text-muted: #A5A29C;
+  --bg: #fafaf9;
+  --surface: #f5f5f4;
+  --surface-hover: #e7e5e4;
 
   /* Structure */
-  --border: #EAEAEA;
-  --border-strong: #D1D1D1;
+  --border: #e7e5e4;
+  --border-strong: #d6d3d1;
 
-  /* Accent: muted teal */
-  --accent: #1F6C9F;
-  --accent-bg: #E1F3FE;
-  --accent-dim: rgba(31, 108, 159, 0.08);
+  /* Text — opacity hierarchy, never second hue */
+  --text: #1c1917;
+  --text-secondary: rgba(28, 25, 23, 0.70);
+  --text-muted: rgba(28, 25, 23, 0.40);
 
-  /* Semantic pastels */
-  --tag-green-bg: #EDF3EC;
-  --tag-green-text: #346538;
-  --tag-red-bg: #FDEBEC;
-  --tag-red-text: #9F2F2D;
-  --tag-yellow-bg: #FBF3DB;
-  --tag-yellow-text: #956400;
+  /* Accent: Swiss Red */
+  --accent: #C8102E;
+  --accent-bg: rgba(200, 16, 46, 0.20);
+  --accent-dim: rgba(200, 16, 46, 0.10);
 
-  /* Data viz */
-  --cat-food: #C4785A;
-  --cat-transport: #5A8AB5;
-  --cat-shopping: #B5983D;
-  --cat-bills: #6A9A6A;
-  --cat-entertainment: #8A6AB5;
-  --cat-health: #C45A5A;
-  --cat-travel: #4A9A8A;
-  --cat-transfer: #8A8680;
-  --cat-other: #A09080;
+  /* Semantic pastels — muted for data viz only */
+  --tag-green-bg: #2D6A4F15;
+  --tag-green-text: #2D6A4F;
+  --tag-red-bg: #C8102E15;
+  --tag-red-text: #C8102E;
+  --tag-yellow-bg: #8B691415;
+  --tag-yellow-text: #8B6914;
+
+  /* Data viz — restrained palette */
+  --cat-food: #8B5A3E;
+  --cat-transport: #3D5A80;
+  --cat-shopping: #8B7355;
+  --cat-bills: #4A6741;
+  --cat-entertainment: #6B4C7A;
+  --cat-health: #8B3A3A;
+  --cat-travel: #2E6B6B;
+  --cat-transfer: #6B6B6B;
+  --cat-other: #8A8580;
 }
 
-/* Dark theme */
-[data-theme="dark"] {
+.dark {
   color-scheme: dark;
 
   /* Canvas */
-  --bg: #0F0F10;
-  --surface: #18181B;
-  --surface-hover: #222228;
-
-  /* Text */
-  --text: #EAEAE8;
-  --text-secondary: #8A8780;
-  --text-muted: #5A5855;
+  --bg: #0c0a09;
+  --surface: #1c1917;
+  --surface-hover: #292524;
 
   /* Structure */
-  --border: rgba(255, 255, 255, 0.07);
+  --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.12);
 
-  /* Accent: muted teal */
-  --accent: #5A9ECF;
-  --accent-bg: rgba(90, 158, 207, 0.12);
-  --accent-dim: rgba(90, 158, 207, 0.06);
+  /* Text */
+  --text: #fafaf9;
+  --text-secondary: rgba(250, 250, 249, 0.70);
+  --text-muted: rgba(250, 250, 249, 0.40);
+
+  /* Accent */
+  --accent: #E03A50;
+  --accent-bg: rgba(224, 58, 80, 0.20);
+  --accent-dim: rgba(224, 58, 80, 0.10);
 
   /* Semantic */
-  --tag-green-bg: rgba(52, 101, 56, 0.15);
-  --tag-green-text: #7AB87A;
-  --tag-yellow-bg: rgba(149, 100, 0, 0.15);
-  --tag-yellow-text: #C8A848;
+  --tag-green-bg: rgba(45, 106, 79, 0.15);
+  --tag-green-text: #6BA88A;
+  --tag-yellow-bg: rgba(139, 105, 20, 0.15);
+  --tag-yellow-text: #C4A855;
 
   /* Data viz */
   --cat-food: #C4785A;
@@ -118,7 +126,7 @@ input {
   font: inherit;
 }
 
-/* Scrollbar */
+/* Scrollbar — minimal, rectilinear */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -130,7 +138,7 @@ input {
 
 ::-webkit-scrollbar-thumb {
   background: var(--border-strong);
-  border-radius: 3px;
+  border-radius: 0;
 }
 
 ::selection {
@@ -177,11 +185,9 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Ambient radial */
-.ambient-light {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(149, 100, 0, 0.03), transparent);
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-shimmer {
+    animation: none;
+  }
 }

@@ -81,27 +81,27 @@ export function DashboardShell({ data }: { data: DashboardData }) {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="mx-auto min-h-[100dvh] max-w-6xl px-6 py-12 sm:px-8 lg:px-12"
+      className="mx-auto min-h-[100dvh] max-w-6xl px-4 py-16 sm:px-8 md:py-24 lg:px-12"
     >
       {/* Header */}
       <motion.header
         variants={itemVariants}
-        className="flex flex-col gap-6 border-b border-[var(--border)] pb-8 md:flex-row md:items-end md:justify-between"
+        className="flex flex-col gap-6 border-b border-(--border) pb-8 md:flex-row md:items-end md:justify-between"
       >
         <div className="max-w-2xl">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-medium tracking-[0.1em] text-[var(--accent)] uppercase">
+            <span className="text-xs font-normal tracking-wide text-(--accent) uppercase">
               {data.notion.dataSourceName}
             </span>
-            <span className="h-px w-6 bg-[var(--border)]" />
-            <span className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
+            <span className="h-px w-6 bg-(--border)" />
+            <span className="font-mono text-xs tabular-nums text-(--text-muted)">
               {data.range.start} — {data.range.end}
             </span>
           </div>
-          <h1 className="mt-3 font-serif text-5xl font-light tracking-tight leading-[1.1] text-[var(--text)] sm:text-6xl">
-            Expense Dashboard
+          <h1 className="mt-3 text-5xl font-light tracking-tight leading-tight text-(--text) sm:text-6xl">
+            Dashboard
           </h1>
-          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+          <p className="mt-2 text-sm text-(--text-secondary)">
             Data from {data.notion.databaseName}
           </p>
         </div>
@@ -118,6 +118,20 @@ export function DashboardShell({ data }: { data: DashboardData }) {
           onApply={applyRange}
         />
       </motion.div>
+
+      {/* AI Status */}
+      <motion.section
+        variants={itemVariants}
+        className="mt-4 inline-flex items-center gap-3 border border-(--border) bg-(--surface) px-4 py-2 text-xs text-(--text-muted)"
+      >
+        <span
+          className={`h-2 w-2 ${
+            statusActive ? "bg-(--tag-green-text)" : "bg-(--text-muted)"
+          }`}
+        />
+        <span className="font-medium text-(--text-secondary)">AI status:</span>{" "}
+        {statusText}
+      </motion.section>
 
       {/* Metrics — asymmetric bento */}
       <motion.section variants={itemVariants} className="mt-8 grid gap-4 md:grid-cols-[1.5fr_1fr]">
@@ -138,18 +152,18 @@ export function DashboardShell({ data }: { data: DashboardData }) {
       {/* Daily Spend */}
       <motion.section
         variants={itemVariants}
-        className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1"
+        className="mt-8 border border-(--border) bg-(--surface) p-1"
       >
         <div className="flex flex-col gap-3 p-5 pb-2 sm:flex-row sm:items-center sm:justify-between sm:p-6 sm:pb-3">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight text-[var(--text)]">
+            <h2 className="text-xl font-normal tracking-tight text-(--text)">
               Daily spend
             </h2>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            <p className="mt-1 text-sm text-(--text-secondary)">
               Each day represented as one column.
             </p>
           </div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--tag-green-bg)] px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-[var(--tag-green-text)]">
+          <span className="inline-flex items-center gap-2 bg-(--tag-green-bg) px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-(--tag-green-text)">
             Top: {topCategory}
           </span>
         </div>
@@ -161,18 +175,18 @@ export function DashboardShell({ data }: { data: DashboardData }) {
       {/* Bottom Grid: Budgets + Category | Transactions */}
       <motion.section
         variants={itemVariants}
-        className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_400px]"
+        className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-stretch"
       >
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8">
           {/* Budgets */}
           {data.budgets.some((b) => b.budget > 0) && (
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
+            <div className="border border-(--border) bg-(--surface) p-5 sm:p-6 sm:h-full">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-semibold tracking-tight text-[var(--text)]">
+                  <h2 className="text-xl font-normal tracking-tight text-(--text)">
                     Budgets
                   </h2>
-                  <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                  <p className="mt-1 text-sm text-(--text-secondary)">
                     Spend against monthly limits.
                   </p>
                 </div>
@@ -184,13 +198,13 @@ export function DashboardShell({ data }: { data: DashboardData }) {
           )}
 
           {/* Category split */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
-            <h2 className="text-lg font-semibold tracking-tight text-[var(--text)]">
+          <div className="border border-(--border) bg-(--surface) p-5 sm:p-6">
+            <h2 className="text-xl font-normal tracking-tight text-(--text)">
               Category split
             </h2>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            <p className="mt-1 text-sm text-(--text-secondary)">
               Breakdown based on the Notion{" "}
-              <code className="rounded bg-[var(--accent-dim)] px-1.5 py-0.5 font-mono text-xs text-[var(--accent)]">
+              <code className="bg-(--accent-dim) px-1.5 py-0.5 font-mono text-xs text-(--accent)">
                 Category
               </code>{" "}
               property.
@@ -202,31 +216,17 @@ export function DashboardShell({ data }: { data: DashboardData }) {
         </div>
 
         {/* Transaction Explorer */}
-        <aside className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
-          <h2 className="text-lg font-semibold tracking-tight text-[var(--text)]">
+        <aside className="flex h-full flex-col border border-(--border) bg-(--surface) p-5 sm:p-6">
+          <h2 className="text-xl font-normal tracking-tight text-(--text)">
             Transactions
           </h2>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          {/* <p className="mt-1 text-sm text-(--text-secondary)">
             Search, filter, and inspect every transaction.
-          </p>
-          <div className="mt-5">
+          </p> */}
+          <div className="mt-5 min-h-0 flex-1">
             <TransactionExplorer transactions={data.allTransactions} />
           </div>
         </aside>
-      </motion.section>
-
-      {/* AI Status */}
-      <motion.section
-        variants={itemVariants}
-        className="mt-8 inline-flex items-center gap-3 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-xs text-[var(--text-muted)]"
-      >
-        <span
-          className={`h-2 w-2 rounded-full ${
-            statusActive ? "bg-[var(--tag-green-text)]" : "bg-[var(--text-muted)]"
-          }`}
-        />
-        <span className="font-medium text-[var(--text-secondary)]">AI status:</span>{" "}
-        {statusText}
       </motion.section>
     </motion.main>
   );
@@ -261,12 +261,12 @@ function FilterToolbar({
     draft.end !== currentRange.end;
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5">
+    <div className="border border-(--border) bg-(--surface) p-4 sm:p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         {/* Left: presets + dates */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
           {/* Presets */}
-          <div className="rounded-lg border border-[var(--border)] bg-[var(--bg)] p-1">
+          <div className="border border-(--border) bg-(--bg) p-1">
             <Tabs.Root
               onValueChange={(value) => setPreset(value as RangePreset)}
               value={draft.preset}
@@ -274,7 +274,7 @@ function FilterToolbar({
               <Tabs.List className="flex gap-1">
                 {presets.map((preset) => (
                   <Tabs.Tab
-                    className="rounded px-3 py-2.5 text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)] active:scale-[0.96] data-[active]:bg-[var(--surface)] data-[active]:text-[var(--text)]"
+                    className="rounded-sm px-3 py-1.25 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) active:scale-[0.96] data-active:bg-(--surface) data-active:text-(--text)"
                     key={preset.value}
                     value={preset.value}
                   >
@@ -282,7 +282,7 @@ function FilterToolbar({
                   </Tabs.Tab>
                 ))}
                 <Tabs.Tab
-                  className="rounded px-3 py-2.5 text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)] active:scale-[0.96] data-[active]:bg-[var(--surface)] data-[active]:text-[var(--text)]"
+                  className="rounded-sm px-3 py-1.25 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) active:scale-[0.96] data-active:bg-(--surface) data-active:text-(--text)"
                   value="custom"
                 >
                   Custom
@@ -294,11 +294,11 @@ function FilterToolbar({
           {/* Date inputs */}
           <div className="flex items-end gap-3">
             <div>
-              <label className="block text-[10px] font-medium uppercase tracking-wider text-[var(--text-muted)]">
+              {/* <label className="block text-[10px] font-medium uppercase tracking-wider text-(--text-muted)">
                 Start
-              </label>
+              </label> */}
               <input
-                className="mt-1 block h-11 w-full appearance-none rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+                className="mt-1 block h-11 w-full appearance-none rounded-sm border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent) placeholder:text-(--text-muted)"
                 onChange={(event) =>
                   setDraft({ preset: "custom", start: event.target.value, end: draft.end })
                 }
@@ -307,11 +307,11 @@ function FilterToolbar({
               />
             </div>
             <div>
-              <label className="block text-[10px] font-medium uppercase tracking-wider text-[var(--text-muted)]">
+              {/* <label className="block text-[10px] font-medium uppercase tracking-wider text-(--text-muted)">
                 End
-              </label>
+              </label> */}
               <input
-                className="mt-1 block h-11 w-full appearance-none rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+                className="mt-1 block h-11 w-full appearance-none rounded-sm border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent) placeholder:text-(--text-muted)"
                 onChange={(event) =>
                   setDraft({ preset: "custom", start: draft.start, end: event.target.value })
                 }
@@ -325,11 +325,11 @@ function FilterToolbar({
         {/* Right: CTAs */}
         <div className="flex items-center gap-3">
           {/* Status indicator */}
-          <div className="flex h-11 items-center rounded-full border border-[var(--border)] bg-[var(--bg)] px-4 text-[11px] font-medium text-[var(--text-muted)]">
+          <div className="flex h-11 items-center rounded-sm border border-(--border) bg-(--bg) px-4 text-[11px] font-medium text-(--text-muted)">
             {isPending ? (
               <span className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--accent)]" />
-                Loading
+                <span className="h-1.5 w-1.5 animate-pulse bg-(--accent)" />
+                Loading…
               </span>
             ) : (
               "Ready"
@@ -340,7 +340,7 @@ function FilterToolbar({
           <button
             onClick={handleReset}
             disabled={!hasChanges || isPending}
-            className="h-11 rounded-lg border border-[var(--border)] px-4 text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--text-secondary)] disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[var(--text-muted)] active:scale-[0.96]"
+            className="h-11 rounded-sm border border-(--border) px-4 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:bg-[var(--surface-hover)] hover:text-(--text-secondary) disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-(--text-muted) active:scale-[0.96]"
             type="button"
           >
             Reset
@@ -350,7 +350,7 @@ function FilterToolbar({
           <button
             onClick={handleApply}
             disabled={!hasChanges || isPending}
-            className="h-11 rounded-md bg-[var(--text)] px-5 text-[11px] font-medium uppercase tracking-wider text-[var(--bg)] transition-colors hover:bg-[var(--text-secondary)] disabled:opacity-40 active:scale-[0.96]"
+            className="h-11 rounded-sm bg-(--accent) px-5 text-[11px] font-medium uppercase tracking-wider text-white transition-colors hover:bg-(--accent)/90 disabled:opacity-40 active:scale-[0.96]"
             type="button"
           >
             Apply
@@ -363,11 +363,11 @@ function FilterToolbar({
 
 function MetricLarge({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 transition-colors hover:border-[var(--border-strong)] sm:p-8 md:p-10">
-      <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[var(--text-muted)]">
+    <div className="flex flex-col justify-between border border-(--border) bg-(--surface) p-6 transition-colors hover:border-(--border-strong) sm:p-8 md:p-10">
+      <p className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
         {label}
       </p>
-      <p className="mt-8 font-serif text-5xl font-light tracking-tight leading-[1.05] text-[var(--text)] sm:text-6xl md:text-7xl">
+      <p className="mt-8 font-mono text-5xl font-light tracking-tight leading-none text-(--text) sm:text-6xl md:text-7xl">
         {value}
       </p>
     </div>
@@ -376,11 +376,11 @@ function MetricLarge({ label, value }: { label: string; value: string }) {
 
 function MetricSmall({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-1 flex-col justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 transition-colors hover:border-[var(--border-strong)] sm:p-8">
-      <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-[var(--text-muted)]">
+    <div className="flex flex-1 flex-col justify-center border border-(--border) bg-(--surface) p-6 transition-colors hover:border-(--border-strong) sm:p-8">
+      <p className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
         {label}
       </p>
-      <p className="mt-4 font-serif text-4xl font-light tracking-tight leading-[1.1] text-[var(--text)] sm:text-5xl">
+      <p className="mt-4 font-mono text-4xl font-light tracking-tight leading-tight text-(--text) sm:text-5xl">
         {value}
       </p>
     </div>

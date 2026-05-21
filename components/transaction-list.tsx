@@ -82,8 +82,8 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search transactions..."
-          className="h-11 w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-4 pl-10 text-sm text-[var(--text)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
+          placeholder="Search transactions…"
+          className="h-11 w-full rounded-sm border border-[var(--border)] bg-[var(--bg)] px-4 pl-10 text-sm text-[var(--text)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
         />
         <svg
           className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"
@@ -116,15 +116,15 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
             <button
               key={cat}
               onClick={() => toggleCategory(cat)}
-              className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[11px] font-medium tracking-wide transition-colors active:scale-[0.96] ${
+              className={`inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-0.75 text-[11px] font-medium tracking-wide transition-colors active:scale-[0.96] cursor-pointer ${
                 active
-                  ? "border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--accent)]"
-                  : "border-[var(--border)] bg-[var(--bg)] text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text-secondary)]"
+                  ? "border-(--accent) bg-(--accent-dim) text-(--accent)"
+                  : "border-(--border) bg-(--bg) text-(--text-muted) hover:border-(--border-strong) hover:text-(--text-secondary)"
               }`}
               type="button"
             >
               <span
-                className="h-1.5 w-1.5 rounded-full"
+                className="h-1.5 w-1.5"
                 style={{ backgroundColor: CATEGORY_COLORS[cat] ?? CATEGORY_COLORS.Other }}
               />
               {cat}
@@ -143,9 +143,9 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
             <button
               key={s}
               onClick={() => setSort(s)}
-              className={`rounded px-2 py-1 text-[10px] font-medium uppercase tracking-wider transition-colors active:scale-[0.96] ${
+              className={`rounded-sm px-2 py-1 text-[10px] font-medium uppercase tracking-wider transition-colors active:scale-[0.96] ${
                 sort === s
-                  ? "bg-[var(--text)] text-[var(--bg)]"
+                  ? "bg-[var(--accent)] text-white"
                   : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
               }`}
               type="button"
@@ -157,7 +157,7 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
       </div>
 
       {/* List */}
-      <div className="mt-2 flex-1 overflow-y-auto pr-1" style={{ maxHeight: "480px" }}>
+      <div className="mt-2 flex-1 overflow-y-auto pr-1 h-full" style={{ maxHeight: "480px" }}>
         <AnimatePresence initial={false} mode="popLayout">
           {filtered.length > 0 ? (
             <dl className="flex flex-col">
@@ -183,14 +183,14 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
                       <span>{transaction.date}</span>
                       <span className="text-[var(--border)]">·</span>
                       <span
-                        className="inline-flex items-center gap-1 rounded px-1 py-0.5 text-[10px] font-medium uppercase tracking-wide"
+                        className="inline-flex items-center gap-1 px-1 py-0.5 text-[10px] font-medium uppercase tracking-wide"
                         style={{
                           backgroundColor: `${CATEGORY_COLORS[transaction.category] ?? CATEGORY_COLORS.Other}20`,
                           color: CATEGORY_COLORS[transaction.category] ?? CATEGORY_COLORS.Other,
                         }}
                       >
                         <span
-                          className="h-1 w-1 rounded-full"
+                          className="h-1 w-1"
                           style={{
                             backgroundColor: CATEGORY_COLORS[transaction.category] ?? CATEGORY_COLORS.Other,
                           }}

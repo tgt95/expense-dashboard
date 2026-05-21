@@ -42,7 +42,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const resolve = () => {
       const resolvedTheme = getResolvedTheme(theme);
       setResolved(resolvedTheme);
-      root.setAttribute("data-theme", resolvedTheme);
+      if (resolvedTheme === "dark") {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
     };
 
     resolve();

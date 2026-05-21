@@ -27,10 +27,10 @@ export function InsightsPanel({ insights }: { insights: SpendingInsight[] }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-      className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6"
+      className="border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6"
     >
       <div className="flex items-center gap-2">
-        <span className="text-xs font-medium tracking-[0.1em] text-[var(--accent)] uppercase">
+        <span className="text-xs font-normal tracking-wide text-[var(--accent)] uppercase">
           AI Insights
         </span>
         <span className="h-px flex-1 bg-[var(--border)]" />
@@ -48,7 +48,7 @@ export function InsightsPanel({ insights }: { insights: SpendingInsight[] }) {
             }}
             className="flex items-start gap-3"
           >
-            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[var(--accent-dim)] text-[10px] font-bold text-[var(--accent)]">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center bg-[var(--accent-dim)] text-[10px] font-medium text-[var(--accent)]">
               {ICONS[insight.type]}
             </span>
             <div className="min-w-0">
