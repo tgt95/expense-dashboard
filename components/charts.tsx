@@ -124,7 +124,7 @@ export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
       <div className="flex flex-col justify-center gap-3">
         {data.map((item) => (
           <div className="group flex items-center justify-between gap-3 text-sm" key={item.category}>
-            <span className="flex min-w-0 items-center gap-2.5 text-[var(--text-secondary)] transition-colors group-hover:text-[var(--text)]">
+            <span className="flex min-w-0 items-center gap-2.5 text-(--text-secondary) transition-colors group-hover:text-(--text)">
               <span
                 className="h-2.5 w-2.5 shrink-0"
                 style={{
@@ -133,7 +133,7 @@ export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
               />
               <span className="truncate">{item.category}</span>
             </span>
-            <span className="shrink-0 font-mono font-medium tabular-nums text-[var(--text)]">
+            <span className="shrink-0 font-mono font-medium tabular-nums text-(--text)">
               {numberFormatter.format(item.amount)}
             </span>
           </div>
@@ -145,14 +145,14 @@ export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
 
 function EmptyChart({ label }: { label: string }) {
   return (
-    <div className="flex h-80 items-center justify-center border border-dashed border-[var(--border)] text-sm text-[var(--text-muted)]">
+    <div className="flex h-80 items-center justify-center border border-dashed border-(--border) text-sm text-(--text-muted)">
       {label}
     </div>
   );
 }
 
 function ChartShell() {
-  return <div className="h-80 w-full bg-[var(--surface)]" />;
+  return <div className="h-80 w-full bg-(--surface)" />;
 }
 
 function useMounted() {

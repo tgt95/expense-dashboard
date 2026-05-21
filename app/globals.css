@@ -47,16 +47,16 @@
   --tag-yellow-bg: #8B691415;
   --tag-yellow-text: #8B6914;
 
-  /* Data viz — restrained palette */
-  --cat-food: #8B5A3E;
-  --cat-transport: #3D5A80;
-  --cat-shopping: #8B7355;
-  --cat-bills: #4A6741;
-  --cat-entertainment: #6B4C7A;
-  --cat-health: #8B3A3A;
-  --cat-travel: #2E6B6B;
-  --cat-transfer: #6B6B6B;
-  --cat-other: #8A8580;
+  /* Data viz — distinct, muted categorical palette */
+  --cat-food: #C47A4E;
+  --cat-transport: #3A6BA0;
+  --cat-shopping: #B09A3A;
+  --cat-bills: #5A9A5A;
+  --cat-entertainment: #8A6AB5;
+  --cat-health: #C05050;
+  --cat-travel: #3A9A9A;
+  --cat-transfer: #8A8A8A;
+  --cat-other: #A0A0A0;
 }
 
 .dark {
@@ -87,16 +87,16 @@
   --tag-yellow-bg: rgba(139, 105, 20, 0.15);
   --tag-yellow-text: #C4A855;
 
-  /* Data viz */
-  --cat-food: #C4785A;
-  --cat-transport: #5A8AB5;
-  --cat-shopping: #B5983D;
-  --cat-bills: #6A9A6A;
-  --cat-entertainment: #8A6AB5;
-  --cat-health: #C45A5A;
-  --cat-travel: #4A9A8A;
-  --cat-transfer: #8A8680;
-  --cat-other: #A09080;
+  /* Data viz — brighter variants for dark backgrounds */
+  --cat-food: #E09878;
+  --cat-transport: #7AB0E0;
+  --cat-shopping: #D4C060;
+  --cat-bills: #7ACA7A;
+  --cat-entertainment: #B090D0;
+  --cat-health: #E08080;
+  --cat-travel: #5ACACA;
+  --cat-transfer: #B0B0B0;
+  --cat-other: #C0C0C0;
 }
 
 * {

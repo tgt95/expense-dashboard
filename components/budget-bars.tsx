@@ -45,8 +45,8 @@ export function BudgetBars({ budgets }: { budgets: BudgetItem[] }) {
 
   if (activeBudgets.length === 0) {
     return (
-      <div className="flex h-40 items-center justify-center border border-dashed border-[var(--border)]">
-        <p className="text-sm text-[var(--text-muted)]">No budgets configured.</p>
+      <div className="flex h-40 items-center justify-center border border-dashed border-(--border)">
+        <p className="text-sm text-(--text-muted)">No budgets configured.</p>
       </div>
     );
   }

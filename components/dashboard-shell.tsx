@@ -119,18 +119,32 @@ export function DashboardShell({ data }: { data: DashboardData }) {
         />
       </motion.div>
 
-      {/* AI Status */}
+      {/* Status row: Ready + AI Status */}
       <motion.section
         variants={itemVariants}
-        className="mt-4 inline-flex items-center gap-3 border border-(--border) bg-(--surface) px-4 py-2 text-xs text-(--text-muted)"
+        className="mt-2 flex flex-row items-center gap-2"
       >
-        <span
-          className={`h-2 w-2 ${
-            statusActive ? "bg-(--tag-green-text)" : "bg-(--text-muted)"
-          }`}
-        />
-        <span className="font-medium text-(--text-secondary)">AI status:</span>{" "}
-        {statusText}
+        {/* Load status */}
+        <div className="inline-flex items-center gap-3 border border-(--border) bg-(--surface) px-4 py-2 text-xs text-(--text-muted)">
+          <span
+            className={`h-2 w-2 ${
+              isPending ? "animate-pulse bg-(--accent)" : "bg-(--tag-green-text)"
+            }`}
+          />
+          <span className="font-medium text-(--text-secondary)">Data:</span>{" "}
+          {isPending ? "Loading…" : "Ready"}
+        </div>
+
+        {/* AI Status */}
+        <div className="w-full inline-flex items-center gap-3 border border-(--border) bg-(--surface) px-4 py-2 text-xs text-(--text-muted)">
+          <span
+            className={`h-2 w-2 ${
+              statusActive ? "bg-(--tag-green-text)" : "bg-(--text-muted)"
+            }`}
+          />
+          <span className="font-medium text-(--text-secondary)">AI status:</span>{" "}
+          {statusText}
+        </div>
       </motion.section>
 
       {/* Metrics — asymmetric bento */}
@@ -180,7 +194,7 @@ export function DashboardShell({ data }: { data: DashboardData }) {
         <div className="flex flex-col gap-8">
           {/* Budgets */}
           {data.budgets.some((b) => b.budget > 0) && (
-            <div className="border border-(--border) bg-(--surface) p-5 sm:p-6 sm:h-full">
+            <div className="border border-(--border) bg-(--surface) p-5 sm:p-6 h-full">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-normal tracking-tight text-(--text)">
@@ -220,9 +234,6 @@ export function DashboardShell({ data }: { data: DashboardData }) {
           <h2 className="text-xl font-normal tracking-tight text-(--text)">
             Transactions
           </h2>
-          {/* <p className="mt-1 text-sm text-(--text-secondary)">
-            Search, filter, and inspect every transaction.
-          </p> */}
           <div className="mt-5 min-h-0 flex-1">
             <TransactionExplorer transactions={data.allTransactions} />
           </div>
@@ -242,6 +253,8 @@ function FilterToolbar({
   onApply: (range: DateRange) => void;
 }) {
   const [draft, setDraft] = useState<DateRange>(currentRange);
+
+  const isCustom = draft.preset === "custom";
 
   const setPreset = (preset: RangePreset) => {
     setDraft({ preset, start: currentRange.start, end: currentRange.end });
@@ -266,7 +279,7 @@ function FilterToolbar({
         {/* Left: presets + dates */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
           {/* Presets */}
-          <div className="border border-(--border) bg-(--bg) p-1">
+          <div className="inline-flex items-center gap-1 rounded-sm border border-(--border) bg-(--bg) p-0.5">
             <Tabs.Root
               onValueChange={(value) => setPreset(value as RangePreset)}
               value={draft.preset}
@@ -274,7 +287,7 @@ function FilterToolbar({
               <Tabs.List className="flex gap-1">
                 {presets.map((preset) => (
                   <Tabs.Tab
-                    className="rounded-sm px-3 py-1.25 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) active:scale-[0.96] data-active:bg-(--surface) data-active:text-(--text)"
+                    className="rounded-sm px-3 py-2 text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-[active]:bg-(--accent) data-[active]:text-white"
                     key={preset.value}
                     value={preset.value}
                   >
@@ -282,7 +295,7 @@ function FilterToolbar({
                   </Tabs.Tab>
                 ))}
                 <Tabs.Tab
-                  className="rounded-sm px-3 py-1.25 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) active:scale-[0.96] data-active:bg-(--surface) data-active:text-(--text)"
+                  className="rounded-sm px-3 py-2 text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-[active]:bg-(--accent) data-[active]:text-white"
                   value="custom"
                 >
                   Custom
@@ -291,27 +304,19 @@ function FilterToolbar({
             </Tabs.Root>
           </div>
 
-          {/* Date inputs */}
-          <div className="flex items-end gap-0">
-            <div>
-              {/* <label className="block text-[10px] font-medium uppercase tracking-wider text-(--text-muted)">
-                Start
-              </label> */}
+          {/* Date inputs — shown only in Custom mode */}
+          {isCustom && (
+            <div className="flex items-end gap-2">
               <input
-                className="mt-1 block h-11 w-full appearance-none rounded-sm border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent) placeholder:text-(--text-muted)"
+                className="h-11 appearance-none border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent)"
                 onChange={(event) =>
                   setDraft({ preset: "custom", start: event.target.value, end: draft.end })
                 }
                 type="date"
                 value={draft.start}
               />
-            </div>
-            <div className="-ml-px">
-              {/* <label className="block text-[10px] font-medium uppercase tracking-wider text-(--text-muted)">
-                End
-              </label> */}
               <input
-                className="mt-1 block h-11 w-full appearance-none rounded-sm border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent) placeholder:text-(--text-muted)"
+                className="h-11 appearance-none border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent) -ml-px"
                 onChange={(event) =>
                   setDraft({ preset: "custom", start: draft.start, end: event.target.value })
                 }
@@ -319,28 +324,16 @@ function FilterToolbar({
                 value={draft.end}
               />
             </div>
-          </div>
+          )}
         </div>
 
         {/* Right: CTAs */}
         <div className="flex items-center gap-3">
-          {/* Status indicator */}
-          <div className="flex h-11 items-center border border-(--border) bg-(--bg) px-4 text-[11px] font-medium text-(--text-muted)">
-            {isPending ? (
-              <span className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 animate-pulse bg-(--accent)" />
-                Loading…
-              </span>
-            ) : (
-              "Ready"
-            )}
-          </div>
-
           {/* Reset */}
           <button
             onClick={handleReset}
             disabled={!hasChanges || isPending}
-            className="h-11 border border-(--border) px-4 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:bg-[var(--surface-hover)] hover:text-(--text-secondary) disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-(--text-muted) active:scale-[0.96]"
+            className="h-11 border border-(--border) px-4 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:bg-(--surface-hover) hover:text-(--text-secondary) disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-(--text-muted) active:scale-[0.96]"
             type="button"
           >
             Reset
