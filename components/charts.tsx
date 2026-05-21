@@ -16,60 +16,59 @@ import {
 import type { CategorySpend, DailySpend } from "@/lib/types";
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Food: "#15803d",
-  Transport: "#2563eb",
-  Shopping: "#db2777",
-  Bills: "#ca8a04",
-  Entertainment: "#7c3aed",
-  Health: "#dc2626",
-  Travel: "#ea580c",
-  Transfer: "#64748b",
-  Other: "#292524",
+  Food: "var(--cat-food)",
+  Transport: "var(--cat-transport)",
+  Shopping: "var(--cat-shopping)",
+  Bills: "var(--cat-bills)",
+  Entertainment: "var(--cat-entertainment)",
+  Health: "var(--cat-health)",
+  Travel: "var(--cat-travel)",
+  Transfer: "var(--cat-transfer)",
+  Other: "var(--cat-other)",
 };
 
-const numberFormatter = new Intl.NumberFormat("en", {
-  maximumFractionDigits: 0,
-});
+const numberFormatter = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });
+
+function CustomTooltip({ active, payload, label }: any) {
+  if (!active || !payload || !payload.length) return null;
+  return (
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-3 shadow-sm">
+      {label && <p className="mb-1 text-xs text-[var(--text-muted)]">{label}</p>}
+      {payload.map((entry: any, index: number) => (
+        <p key={index} className="font-mono text-sm font-medium tabular-nums text-[var(--text)]">
+          {numberFormatter.format(Number(entry.value))}
+        </p>
+      ))}
+    </div>
+  );
+}
 
 export function DailyColumnChart({ data }: { data: DailySpend[] }) {
   const mounted = useMounted();
 
-  if (!mounted) {
-    return <ChartShell />;
-  }
-
-  if (data.length === 0) {
-    return <EmptyChart label="No daily spend in this range" />;
-  }
+  if (!mounted) return <ChartShell />;
+  if (data.length === 0) return <EmptyChart label="No daily spend in this range" />;
 
   return (
     <div className="h-80 w-full">
       <ResponsiveContainer height="100%" width="100%">
         <BarChart data={data} margin={{ bottom: 8, left: 0, right: 10, top: 16 }}>
-          <CartesianGrid stroke="#e7e5e4" strokeDasharray="3 3" vertical={false} />
+          <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} strokeOpacity={0.5} />
           <XAxis
             axisLine={false}
             dataKey="label"
-            tick={{ fill: "#57534e", fontSize: 12 }}
+            tick={{ fill: "var(--text-muted)", fontSize: 12, fontFamily: "var(--font-mono)" }}
             tickLine={false}
           />
           <YAxis
             axisLine={false}
-            tick={{ fill: "#57534e", fontSize: 12 }}
+            tick={{ fill: "var(--text-muted)", fontSize: 12, fontFamily: "var(--font-mono)" }}
             tickFormatter={(value) => numberFormatter.format(Number(value))}
             tickLine={false}
             width={64}
           />
-          <Tooltip
-            contentStyle={{
-              border: "1px solid #d6d3d1",
-              borderRadius: 8,
-              boxShadow: "0 12px 30px rgba(28, 25, 23, 0.12)",
-            }}
-            formatter={(value) => [numberFormatter.format(Number(value)), "Amount"]}
-            labelStyle={{ color: "#1c1917", fontWeight: 600 }}
-          />
-          <Bar dataKey="amount" fill="#0f766e" radius={[6, 6, 0, 0]} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: "var(--border)", opacity: 0.3 }} />
+          <Bar dataKey="amount" fill="var(--accent)" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -79,16 +78,11 @@ export function DailyColumnChart({ data }: { data: DailySpend[] }) {
 export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
   const mounted = useMounted();
 
-  if (!mounted) {
-    return <ChartShell />;
-  }
-
-  if (data.length === 0) {
-    return <EmptyChart label="No category spend in this range" />;
-  }
+  if (!mounted) return <ChartShell />;
+  if (data.length === 0) return <EmptyChart label="No category spend in this range" />;
 
   return (
-    <div className="grid min-h-80 gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
+    <div className="grid min-h-80 gap-8 lg:grid-cols-[minmax(0,1fr)_200px]">
       <div className="h-80 w-full">
         <ResponsiveContainer height="100%" width="100%">
           <PieChart>
@@ -97,10 +91,12 @@ export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
               cy="50%"
               data={data}
               dataKey="amount"
-              innerRadius={72}
+              innerRadius={70}
               nameKey="category"
-              outerRadius={118}
+              outerRadius={115}
               paddingAngle={2}
+              stroke="var(--surface)"
+              strokeWidth={2}
             >
               {data.map((item) => (
                 <Cell
@@ -109,24 +105,14 @@ export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
                 />
               ))}
             </Pie>
-            <Tooltip
-              contentStyle={{
-                border: "1px solid #d6d3d1",
-                borderRadius: 8,
-                boxShadow: "0 12px 30px rgba(28, 25, 23, 0.12)",
-              }}
-              formatter={(value, name) => [
-                numberFormatter.format(Number(value)),
-                String(name),
-              ]}
-            />
+            <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
       </div>
       <div className="flex flex-col justify-center gap-3">
         {data.map((item) => (
-          <div className="flex items-center justify-between gap-3 text-sm" key={item.category}>
-            <span className="flex min-w-0 items-center gap-2 text-stone-700">
+          <div className="group flex items-center justify-between gap-3 text-sm" key={item.category}>
+            <span className="flex min-w-0 items-center gap-2.5 text-[var(--text-secondary)] transition-colors group-hover:text-[var(--text)]">
               <span
                 className="h-2.5 w-2.5 shrink-0 rounded-full"
                 style={{
@@ -135,7 +121,7 @@ export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
               />
               <span className="truncate">{item.category}</span>
             </span>
-            <span className="font-medium tabular-nums text-stone-950">
+            <span className="shrink-0 font-mono font-medium tabular-nums text-[var(--text)]">
               {numberFormatter.format(item.amount)}
             </span>
           </div>
@@ -147,28 +133,21 @@ export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
 
 function EmptyChart({ label }: { label: string }) {
   return (
-    <div className="flex h-80 items-center justify-center rounded-md border border-dashed border-stone-300 bg-stone-50 text-sm text-stone-500">
+    <div className="flex h-80 items-center justify-center rounded-xl border border-dashed border-[var(--border)] text-sm text-[var(--text-muted)]">
       {label}
     </div>
   );
 }
 
 function ChartShell() {
-  return <div className="h-80 w-full rounded-md bg-stone-50" />;
+  return <div className="h-80 w-full rounded-xl bg-[var(--surface)]" />;
 }
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      setMounted(true);
-    });
-
-    return () => {
-      cancelAnimationFrame(frame);
-    };
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
-
   return mounted;
 }
