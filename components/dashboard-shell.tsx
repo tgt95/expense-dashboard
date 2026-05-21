@@ -155,7 +155,7 @@ export function DashboardShell({ data }: { data: DashboardData }) {
       <motion.section variants={itemVariants} className="mt-8 grid gap-4 md:grid-cols-[1.5fr_1fr]">
         <MetricLarge label="Total spend" value={numberFormatter.format(Math.round(data.total))} />
         <div className="flex flex-col gap-4">
-          <MetricSmall label="Transactions" value={numberFormatter.format(data.transactionCount)} />
+          <MetricSmall label="Transactions" value={numberFormatter.format(data.transactionCount)} currency="" />
           <MetricSmall label="Average" value={numberFormatter.format(Math.round(average))} />
         </div>
       </motion.section>
@@ -196,6 +196,23 @@ export function DashboardShell({ data }: { data: DashboardData }) {
         className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-stretch"
       >
         <div className="flex flex-col gap-8">
+          {/* Category split */}
+          <div className="border border-(--border) bg-(--surface) p-5 sm:p-6">
+            <h2 className="text-xl font-normal tracking-tight text-(--text)">
+              Category split
+            </h2>
+            <p className="mt-1 text-sm text-(--text-secondary)">
+              Breakdown based on the Notion{" "}
+              <code className="bg-(--accent-dim) px-1.5 py-0.5 font-mono text-xs text-(--accent)">
+                Category
+              </code>{" "}
+              property.
+            </p>
+            <div className="mt-5">
+              <CategoryPieChart data={data.categorySpend} />
+            </div>
+          </div>
+          
           {/* Budgets */}
           {data.budgets.some((b) => b.budget > 0) && (
             <div className="border border-(--border) bg-(--surface) p-5 sm:p-6 h-full">
@@ -214,23 +231,6 @@ export function DashboardShell({ data }: { data: DashboardData }) {
               </div>
             </div>
           )}
-
-          {/* Category split */}
-          <div className="border border-(--border) bg-(--surface) p-5 sm:p-6">
-            <h2 className="text-xl font-normal tracking-tight text-(--text)">
-              Category split
-            </h2>
-            <p className="mt-1 text-sm text-(--text-secondary)">
-              Breakdown based on the Notion{" "}
-              <code className="bg-(--accent-dim) px-1.5 py-0.5 font-mono text-xs text-(--accent)">
-                Category
-              </code>{" "}
-              property.
-            </p>
-            <div className="mt-5">
-              <CategoryPieChart data={data.categorySpend} />
-            </div>
-          </div>
         </div>
 
         {/* Transaction Explorer */}
@@ -358,7 +358,7 @@ function FilterToolbar({
   );
 }
 
-function MetricLarge({ label, value }: { label: string; value: string }) {
+function MetricLarge({ label, value, currency = "₫" }: { label: string; value: string; currency?: string }) {
   return (
     <div className="flex flex-col justify-between border border-(--border) bg-(--surface) p-6 sm:p-8">
       <p className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
@@ -366,12 +366,13 @@ function MetricLarge({ label, value }: { label: string; value: string }) {
       </p>
       <p className="mt-8 font-mono text-5xl font-normal tracking-tight leading-none text-(--text) sm:text-6xl md:text-7xl">
         {value}
+        <span className="text-2xl font-medium uppercase tracking-wider text-(--text-muted)">{currency}</span>
       </p>
     </div>
   );
 }
 
-function MetricSmall({ label, value }: { label: string; value: string }) {
+function MetricSmall({ label, value, currency = "₫" }: { label: string; value: string; currency?: string }) {
   return (
     <div className="flex flex-1 flex-col justify-center border border-(--border) bg-(--surface) p-6 sm:p-8">
       <p className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
@@ -379,6 +380,7 @@ function MetricSmall({ label, value }: { label: string; value: string }) {
       </p>
       <p className="mt-4 font-mono text-4xl font-normal tracking-tight leading-tight text-(--text) sm:text-5xl">
         {value}
+        <span className="text-base font-medium uppercase tracking-wider text-(--text-muted)">{currency}</span>
       </p>
     </div>
   );
