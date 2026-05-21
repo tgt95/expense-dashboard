@@ -292,7 +292,7 @@ function FilterToolbar({
           </div>
 
           {/* Date inputs */}
-          <div className="flex items-end gap-3">
+          <div className="flex items-end gap-0">
             <div>
               {/* <label className="block text-[10px] font-medium uppercase tracking-wider text-(--text-muted)">
                 Start
@@ -306,7 +306,7 @@ function FilterToolbar({
                 value={draft.start}
               />
             </div>
-            <div>
+            <div className="-ml-px">
               {/* <label className="block text-[10px] font-medium uppercase tracking-wider text-(--text-muted)">
                 End
               </label> */}
@@ -325,7 +325,7 @@ function FilterToolbar({
         {/* Right: CTAs */}
         <div className="flex items-center gap-3">
           {/* Status indicator */}
-          <div className="flex h-11 items-center rounded-sm border border-(--border) bg-(--bg) px-4 text-[11px] font-medium text-(--text-muted)">
+          <div className="flex h-11 items-center border border-(--border) bg-(--bg) px-4 text-[11px] font-medium text-(--text-muted)">
             {isPending ? (
               <span className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 animate-pulse bg-(--accent)" />
@@ -340,7 +340,7 @@ function FilterToolbar({
           <button
             onClick={handleReset}
             disabled={!hasChanges || isPending}
-            className="h-11 rounded-sm border border-(--border) px-4 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:bg-[var(--surface-hover)] hover:text-(--text-secondary) disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-(--text-muted) active:scale-[0.96]"
+            className="h-11 border border-(--border) px-4 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:bg-[var(--surface-hover)] hover:text-(--text-secondary) disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-(--text-muted) active:scale-[0.96]"
             type="button"
           >
             Reset
@@ -350,7 +350,7 @@ function FilterToolbar({
           <button
             onClick={handleApply}
             disabled={!hasChanges || isPending}
-            className="h-11 rounded-sm bg-(--accent) px-5 text-[11px] font-medium uppercase tracking-wider text-white transition-colors hover:bg-(--accent)/90 disabled:opacity-40 active:scale-[0.96]"
+            className="h-11 bg-(--accent) px-5 text-[11px] font-medium uppercase tracking-wider text-white transition-colors hover:bg-(--accent)/90 disabled:opacity-40 active:scale-[0.96]"
             type="button"
           >
             Apply
