@@ -219,7 +219,19 @@ function richTextToPlain(items: Array<{ plain_text?: string }>) {
 }
 
 function colorForCategory(category: ExpenseCategory) {
-  const colors: Record<ExpenseCategory, "blue" | "brown" | "default" | "gray" | "green" | "orange" | "pink" | "purple" | "red" | "yellow"> = {
+  const colors: Record<
+    ExpenseCategory,
+    | "blue"
+    | "brown"
+    | "default"
+    | "gray"
+    | "green"
+    | "orange"
+    | "pink"
+    | "purple"
+    | "red"
+    | "yellow"
+  > = {
     Food: "green",
     Transport: "blue",
     Shopping: "pink",

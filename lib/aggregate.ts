@@ -1,8 +1,18 @@
 import { formatShortDate, listDateKeys } from "@/lib/date-range";
-import { CATEGORIES, type CategorySpend, type DailySpend, type DateRange, type ExpenseTransaction } from "@/lib/types";
+import {
+  CATEGORIES,
+  type CategorySpend,
+  type DailySpend,
+  type DateRange,
+  type ExpenseTransaction,
+} from "@/lib/types";
 
-export function filterTransactionsByRange(
-  transactions: ExpenseTransaction[],
+type RangeTransaction = Pick<ExpenseTransaction, "date">;
+type SpendTransaction = Pick<ExpenseTransaction, "amount" | "category">;
+type DailyTransaction = Pick<ExpenseTransaction, "amount" | "date">;
+
+export function filterTransactionsByRange<TTransaction extends RangeTransaction>(
+  transactions: TTransaction[],
   range: DateRange,
 ) {
   return transactions.filter((transaction) => {
@@ -11,13 +21,16 @@ export function filterTransactionsByRange(
 }
 
 export function aggregateDailySpend(
-  transactions: ExpenseTransaction[],
+  transactions: DailyTransaction[],
   range: DateRange,
 ): DailySpend[] {
   const totals = new Map(listDateKeys(range).map((date) => [date, 0]));
 
   for (const transaction of transactions) {
-    totals.set(transaction.date, (totals.get(transaction.date) ?? 0) + Math.abs(transaction.amount));
+    totals.set(
+      transaction.date,
+      (totals.get(transaction.date) ?? 0) + Math.abs(transaction.amount),
+    );
   }
 
   return Array.from(totals, ([date, amount]) => ({
@@ -27,7 +40,7 @@ export function aggregateDailySpend(
   }));
 }
 
-export function aggregateCategorySpend(transactions: ExpenseTransaction[]): CategorySpend[] {
+export function aggregateCategorySpend(transactions: SpendTransaction[]): CategorySpend[] {
   const totals = new Map(CATEGORIES.map((category) => [category, { amount: 0, count: 0 }]));
 
   for (const transaction of transactions) {

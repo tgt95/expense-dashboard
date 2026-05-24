@@ -1,7 +1,14 @@
 import "server-only";
 
 import { GoogleGenAI } from "@google/genai";
-import { CATEGORIES, type BudgetItem, type DailySpend, type ExpenseCategory, type ExpenseTransaction, type SpendingInsight } from "@/lib/types";
+import {
+  CATEGORIES,
+  type BudgetItem,
+  type DailySpend,
+  type ExpenseCategory,
+  type ExpenseTransaction,
+  type SpendingInsight,
+} from "@/lib/types";
 
 type ClassificationInput = Pick<ExpenseTransaction, "id" | "name" | "amount" | "date" | "rawEmail">;
 

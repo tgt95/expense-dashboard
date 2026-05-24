@@ -3,8 +3,9 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: 'IBM Plex Sans', 'Hanken Grotesk', 'Barlow', 'Host Grotesk', 'DM Sans', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Fira Code', ui-monospace, monospace;
+  --font-sans:
+    "IBM Plex Sans", "Hanken Grotesk", "Barlow", "Host Grotesk", "DM Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Fira Code", ui-monospace, monospace;
 
   --max-width-prose: 60ch;
   --max-width-prose-wide: 72ch;
@@ -34,32 +35,32 @@
 
   /* Text — opacity hierarchy, never second hue */
   --text: #1c1917;
-  --text-secondary: rgba(28, 25, 23, 0.70);
-  --text-muted: rgba(28, 25, 23, 0.40);
+  --text-secondary: rgba(28, 25, 23, 0.7);
+  --text-muted: rgba(28, 25, 23, 0.4);
 
   /* Accent: Swiss Red */
-  --accent: #C8102E;
-  --accent-bg: rgba(200, 16, 46, 0.20);
-  --accent-dim: rgba(200, 16, 46, 0.10);
+  --accent: #c8102e;
+  --accent-bg: rgba(200, 16, 46, 0.2);
+  --accent-dim: rgba(200, 16, 46, 0.1);
 
   /* Semantic pastels — muted for data viz only */
-  --tag-green-bg: #2D6A4F15;
-  --tag-green-text: #2D6A4F;
-  --tag-red-bg: #C8102E15;
-  --tag-red-text: #C8102E;
-  --tag-yellow-bg: #8B691415;
-  --tag-yellow-text: #8B6914;
+  --tag-green-bg: #2d6a4f15;
+  --tag-green-text: #2d6a4f;
+  --tag-red-bg: #c8102e15;
+  --tag-red-text: #c8102e;
+  --tag-yellow-bg: #8b691415;
+  --tag-yellow-text: #8b6914;
 
   /* Data viz — distinct, muted categorical palette */
-  --cat-food: #C47A4E;
-  --cat-transport: #3A6BA0;
-  --cat-shopping: #B09A3A;
-  --cat-bills: #5A9A5A;
-  --cat-entertainment: #8A6AB5;
-  --cat-health: #C05050;
-  --cat-travel: #3A9A9A;
-  --cat-transfer: #8A8A8A;
-  --cat-other: #A0A0A0;
+  --cat-food: #c47a4e;
+  --cat-transport: #3a6ba0;
+  --cat-shopping: #b09a3a;
+  --cat-bills: #5a9a5a;
+  --cat-entertainment: #8a6ab5;
+  --cat-health: #c05050;
+  --cat-travel: #3a9a9a;
+  --cat-transfer: #8a8a8a;
+  --cat-other: #a0a0a0;
 }
 
 .dark {
@@ -76,30 +77,30 @@
 
   /* Text */
   --text: #fafaf9;
-  --text-secondary: rgba(250, 250, 249, 0.70);
-  --text-muted: rgba(250, 250, 249, 0.40);
+  --text-secondary: rgba(250, 250, 249, 0.7);
+  --text-muted: rgba(250, 250, 249, 0.4);
 
   /* Accent */
-  --accent: #E03A50;
-  --accent-bg: rgba(224, 58, 80, 0.20);
-  --accent-dim: rgba(224, 58, 80, 0.10);
+  --accent: #e03a50;
+  --accent-bg: rgba(224, 58, 80, 0.2);
+  --accent-dim: rgba(224, 58, 80, 0.1);
 
   /* Semantic */
   --tag-green-bg: rgba(45, 106, 79, 0.15);
-  --tag-green-text: #6BA88A;
+  --tag-green-text: #6ba88a;
   --tag-yellow-bg: rgba(139, 105, 20, 0.15);
-  --tag-yellow-text: #C4A855;
+  --tag-yellow-text: #c4a855;
 
   /* Data viz — brighter variants for dark backgrounds */
-  --cat-food: #E09878;
-  --cat-transport: #7AB0E0;
-  --cat-shopping: #D4C060;
-  --cat-bills: #7ACA7A;
-  --cat-entertainment: #B090D0;
-  --cat-health: #E08080;
-  --cat-travel: #5ACACA;
-  --cat-transfer: #B0B0B0;
-  --cat-other: #C0C0C0;
+  --cat-food: #e09878;
+  --cat-transport: #7ab0e0;
+  --cat-shopping: #d4c060;
+  --cat-bills: #7aca7a;
+  --cat-entertainment: #b090d0;
+  --cat-health: #e08080;
+  --cat-travel: #5acaca;
+  --cat-transfer: #b0b0b0;
+  --cat-other: #c0c0c0;
 }
 
 * {
@@ -121,7 +122,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 button,
@@ -162,8 +165,12 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 /* Shimmer */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .animate-shimmer {

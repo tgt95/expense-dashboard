@@ -12,6 +12,7 @@ A **personal expense analytics dashboard** backed by Notion and augmented with A
 **Current stack:** Next.js App Router, React Server Components, TypeScript, Tailwind CSS, Recharts, Motion, Notion API, Google GenAI.
 
 **Current features:**
+
 - Auto-sync from Notion database
 - AI-powered transaction categorization (Gemini)
 - Fallback regex-based local classification
@@ -29,12 +30,12 @@ A **personal expense analytics dashboard** backed by Notion and augmented with A
 
 ### 2.1 Product-Market Fit Signals (0–10)
 
-| Signal | Score | Notes |
-|---|---|---|
-| Usage growth trajectory | 2/10 | Single-user tool; no telemetry, no auth, no sharing. |
-| Retention indicators | 3/10 | No recurring engagement features (no alerts, no goals, no budgeting). User must manually visit the dashboard. |
-| Revenue signals | 0/10 | No pricing, no billing, no Stripe. Pure personal utility. |
-| Competitive moat | 2/10 | The AI categorization is nice, but competitors (Monarch, YNAB, Copilot) have bank integrations, mobile apps, and team features. Notion-as-backend is a moat only for Notion power users. |
+| Signal                  | Score | Notes                                                                                                                                                                                    |
+| ----------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Usage growth trajectory | 2/10  | Single-user tool; no telemetry, no auth, no sharing.                                                                                                                                     |
+| Retention indicators    | 3/10  | No recurring engagement features (no alerts, no goals, no budgeting). User must manually visit the dashboard.                                                                            |
+| Revenue signals         | 0/10  | No pricing, no billing, no Stripe. Pure personal utility.                                                                                                                                |
+| Competitive moat        | 2/10  | The AI categorization is nice, but competitors (Monarch, YNAB, Copilot) have bank integrations, mobile apps, and team features. Notion-as-backend is a moat only for Notion power users. |
 
 **Average PMF Score: 1.75/10**
 
@@ -44,7 +45,7 @@ This is currently a **personal side-project utility**, not a product. That is fi
 
 **Bank API + automatic transaction ingestion.**
 
-Right now, the user must manually enter every transaction into Notion. A personal finance tool where the hardest step (data entry) is entirely manual will never retain users. The killer feature is: connect a bank account (Plaid / GoCardless / Teller) and have transactions flow in automatically, with AI categorization happening in the background, and the dashboard surfacing insights *without the user opening Notion*.
+Right now, the user must manually enter every transaction into Notion. A personal finance tool where the hardest step (data entry) is entirely manual will never retain users. The killer feature is: connect a bank account (Plaid / GoCardless / Teller) and have transactions flow in automatically, with AI categorization happening in the background, and the dashboard surfacing insights _without the user opening Notion_.
 
 ### 2.3 Things Currently Being Built That Don't Matter (Yet)
 
@@ -117,18 +118,18 @@ This means: a hosted version, a setup wizard (paste Notion API key, pick databas
 
 Candidate features scored on **Impact (1–5) × Confidence (1–5) ÷ Effort (1–5)**
 
-| # | Feature | Impact | Confidence | Effort | ICE Score | Rationale |
-|---|---|---|---|---|---|---|
-| 1 | **Search & filter transaction list** | 4 | 5 | 2 | **10.0** | High user value, trivial to implement. Fixes the arbitrary 8-item limit. |
-| 2 | **Budgets: set monthly limits per category** | 5 | 4 | 2 | **10.0** | Transforms dashboard from "what happened" to "what should I do." Needs budget properties in Notion. |
-| 3 | **AI spending insights (natural language)** | 5 | 4 | 3 | **6.7** | Differentiator. "You spent 40% more on Food this week." Uses existing Gemini integration. |
-| 4 | **Export to CSV / PDF** | 3 | 5 | 2 | **7.5** | Standard table-stakes; useful for tax season. |
-| 5 | **Monthly / yearly comparison views** | 4 | 4 | 3 | **5.3** | Easy win for context; needs date-range presets expanded. |
-| 6 | **Recurring transaction detection** | 4 | 3 | 3 | **4.0** | Strong utility for budgeting; algorithmic complexity moderate. |
-| 7 | **Receipt upload + OCR (Geminimultimodal)** | 4 | 3 | 4 | **3.0** | Powerful, but overkill until core dashboard is sticky. |
-| 8 | **Bank API integration (Plaid)** | 5 | 3 | 5 | **3.0** | The 10x feature, but high effort, compliance, and cost. Defer until user base exists. |
-| 9 | **Multi-user / team support** | 3 | 2 | 5 | **1.2** | Premature without proven single-user retention. |
-| 10 | **PWA offline support** | 3 | 4 | 4 | **3.0** | Nice for mobile usage, but data requires Notion connection. |
+| #   | Feature                                      | Impact | Confidence | Effort | ICE Score | Rationale                                                                                           |
+| --- | -------------------------------------------- | ------ | ---------- | ------ | --------- | --------------------------------------------------------------------------------------------------- |
+| 1   | **Search & filter transaction list**         | 4      | 5          | 2      | **10.0**  | High user value, trivial to implement. Fixes the arbitrary 8-item limit.                            |
+| 2   | **Budgets: set monthly limits per category** | 5      | 4          | 2      | **10.0**  | Transforms dashboard from "what happened" to "what should I do." Needs budget properties in Notion. |
+| 3   | **AI spending insights (natural language)**  | 5      | 4          | 3      | **6.7**   | Differentiator. "You spent 40% more on Food this week." Uses existing Gemini integration.           |
+| 4   | **Export to CSV / PDF**                      | 3      | 5          | 2      | **7.5**   | Standard table-stakes; useful for tax season.                                                       |
+| 5   | **Monthly / yearly comparison views**        | 4      | 4          | 3      | **5.3**   | Easy win for context; needs date-range presets expanded.                                            |
+| 6   | **Recurring transaction detection**          | 4      | 3          | 3      | **4.0**   | Strong utility for budgeting; algorithmic complexity moderate.                                      |
+| 7   | **Receipt upload + OCR (Geminimultimodal)**  | 4      | 3          | 4      | **3.0**   | Powerful, but overkill until core dashboard is sticky.                                              |
+| 8   | **Bank API integration (Plaid)**             | 5      | 3          | 5      | **3.0**   | The 10x feature, but high effort, compliance, and cost. Defer until user base exists.               |
+| 9   | **Multi-user / team support**                | 3      | 2          | 5      | **1.2**   | Premature without proven single-user retention.                                                     |
+| 10  | **PWA offline support**                      | 3      | 4          | 4      | **3.0**   | Nice for mobile usage, but data requires Notion connection.                                         |
 
 ### Top 3 Recommended Next Features
 

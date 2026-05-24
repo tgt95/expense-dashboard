@@ -55,9 +55,8 @@ export function BudgetBars({ budgets }: { budgets: BudgetItem[] }) {
     <div className="flex flex-col gap-4">
       {activeBudgets.map((item, index) => {
         const styles = STATUS_STYLES[item.status];
-        const overPercent = item.spent > item.budget
-          ? Math.round((item.spent / item.budget) * 100)
-          : item.percent;
+        const overPercent =
+          item.spent > item.budget ? Math.round((item.spent / item.budget) * 100) : item.percent;
 
         return (
           <motion.div
@@ -75,7 +74,9 @@ export function BudgetBars({ budgets }: { budgets: BudgetItem[] }) {
               <div className="flex min-w-0 items-center gap-2">
                 <span
                   className="h-2 w-2 shrink-0"
-                  style={{ backgroundColor: CATEGORY_COLORS[item.category] ?? CATEGORY_COLORS.Other }}
+                  style={{
+                    backgroundColor: CATEGORY_COLORS[item.category] ?? CATEGORY_COLORS.Other,
+                  }}
                 />
                 <span className="truncate text-sm font-medium text-[var(--text)]">
                   {item.category}
@@ -89,9 +90,7 @@ export function BudgetBars({ budgets }: { budgets: BudgetItem[] }) {
                   / {numberFormatter.format(item.budget)}
                 </span>
                 {item.status !== "none" && (
-                  <span className={`text-[11px] font-medium ${styles.text}`}>
-                    {overPercent}%
-                  </span>
+                  <span className={`text-[11px] font-medium ${styles.text}`}>{overPercent}%</span>
                 )}
               </div>
             </div>

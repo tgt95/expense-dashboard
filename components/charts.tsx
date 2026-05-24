@@ -64,8 +64,13 @@ export function DailyColumnChart({ data }: { data: DailySpend[] }) {
   return (
     <div className="h-80 w-full">
       <ResponsiveContainer height="100%" width="100%">
-        <BarChart data={data} margin={{ bottom: 8, left: 0, right: 10, top: 16 }}>
-          <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} strokeOpacity={0.5} />
+        <BarChart data={data} margin={{ bottom: 8, left: 16, right: 10, top: 16 }}>
+          <CartesianGrid
+            stroke="var(--border)"
+            strokeDasharray="3 3"
+            vertical={false}
+            strokeOpacity={0.5}
+          />
           <XAxis
             axisLine={false}
             dataKey="label"
@@ -123,7 +128,10 @@ export function CategoryPieChart({ data }: { data: CategorySpend[] }) {
       </div>
       <div className="flex flex-col justify-center gap-3">
         {data.map((item) => (
-          <div className="group flex items-center justify-between gap-3 text-sm" key={item.category}>
+          <div
+            className="group flex items-center justify-between gap-3 text-sm"
+            key={item.category}
+          >
             <span className="flex min-w-0 items-center gap-2.5 text-(--text-secondary) transition-colors group-hover:text-(--text)">
               <span
                 className="h-2.5 w-2.5 shrink-0"

@@ -2,10 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { classifyTransactions, generateInsights } from "@/lib/ai";
-import {
-  getBudgetConfig,
-  getBudgetStatus,
-} from "@/lib/budgets";
+import { getBudgetConfig, getBudgetStatus } from "@/lib/budgets";
 import {
   aggregateCategorySpend,
   aggregateDailySpend,
@@ -22,7 +19,13 @@ import {
   queryExpensePages,
   writeTransactionCategories,
 } from "@/lib/notion";
-import type { DashboardData, DateRange, ExpenseCategory, ExpenseTransaction } from "@/lib/types";
+import {
+  CATEGORIES,
+  type DashboardData,
+  type DateRange,
+  type ExpenseCategory,
+  type ExpenseTransaction,
+} from "@/lib/types";
 
 const getNotionPayload = cache(async () => {
   const env = getEnv();
@@ -96,12 +99,13 @@ export async function getDashboardData(range: DateRange): Promise<DashboardData>
 
   // Budgets
   const budgetConfig = getBudgetConfig();
-  const budgets = categorySpend.map((cs) => {
-    const budget = budgetConfig[cs.category] ?? 0;
-    const { state, percent } = getBudgetStatus(cs.amount, budget);
+  const budgets = CATEGORIES.map((category) => {
+    const spent = categorySpend.find((item) => item.category === category)?.amount ?? 0;
+    const budget = budgetConfig[category] ?? 0;
+    const { state, percent } = getBudgetStatus(spent, budget);
     return {
-      category: cs.category,
-      spent: cs.amount,
+      category,
+      spent,
       budget,
       status: state,
       percent,
@@ -129,7 +133,7 @@ export async function getDashboardData(range: DateRange): Promise<DashboardData>
     }
   }
 
-  const publicTransactions = filteredTransactions.map((transaction) => ({
+  const publicTransactions = transactions.map((transaction) => ({
     id: transaction.id,
     name: transaction.name,
     amount: transaction.amount,
@@ -143,7 +147,13 @@ export async function getDashboardData(range: DateRange): Promise<DashboardData>
     transactionCount: filteredTransactions.length,
     dailySpend,
     categorySpend,
-    recentTransactions: publicTransactions.slice(0, 8),
+    recentTransactions: filteredTransactions.slice(0, 8).map((transaction) => ({
+      id: transaction.id,
+      name: transaction.name,
+      amount: transaction.amount,
+      date: transaction.date,
+      category: transaction.category,
+    })),
     allTransactions: publicTransactions,
     budgets,
     insights,

@@ -1,22 +1,26 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
-import { Tabs } from "@base-ui/react/tabs";
+import { useMemo, useTransition } from "react";
 import { motion } from "motion/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  aggregateCategorySpend,
+  aggregateDailySpend,
+  filterTransactionsByRange,
+} from "@/lib/aggregate";
 import { BudgetBars } from "@/components/budget-bars";
 import { CategoryPieChart, DailyColumnChart } from "@/components/charts";
+import { DashboardPanel } from "@/components/dashboard/dashboard-panel";
+import { DateRangeFilter } from "@/components/dashboard/date-range-filter";
+import { MetricCard } from "@/components/dashboard/metric-card";
+import { StatusIndicator } from "@/components/dashboard/status-indicator";
 import { InsightsPanel } from "@/components/insights-panel";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TransactionExplorer } from "@/components/transaction-list";
-import type { DashboardData, DateRange, RangePreset } from "@/lib/types";
+import { parseRangeFromSearchParams } from "@/lib/date-range";
+import type { BudgetItem, DashboardData, DateRange } from "@/lib/types";
 
 const numberFormatter = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });
-
-const presets: Array<{ value: Exclude<RangePreset, "custom">; label: string }> = [
-  { value: "last-3-days", label: "Last 3 days" },
-  { value: "last-week", label: "Last week" },
-];
 
 const easeOut = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
@@ -43,6 +47,36 @@ export function DashboardShell({ data }: { data: DashboardData }) {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
+  const currentRange = useMemo(
+    () => parseRangeFromSearchParams(Object.fromEntries(searchParams.entries())),
+    [searchParams],
+  );
+
+  const visibleTransactions = useMemo(
+    () => filterTransactionsByRange(data.allTransactions, currentRange),
+    [currentRange, data.allTransactions],
+  );
+
+  const categorySpend = useMemo(
+    () => aggregateCategorySpend(visibleTransactions),
+    [visibleTransactions],
+  );
+
+  const dailySpend = useMemo(
+    () => aggregateDailySpend(visibleTransactions, currentRange),
+    [currentRange, visibleTransactions],
+  );
+
+  const total = useMemo(
+    () => visibleTransactions.reduce((sum, transaction) => sum + Math.abs(transaction.amount), 0),
+    [visibleTransactions],
+  );
+
+  const budgets = useMemo(
+    () => deriveBudgets(data.budgets, categorySpend),
+    [categorySpend, data.budgets],
+  );
+
   const applyRange = (nextRange: DateRange) => {
     const params = new URLSearchParams(searchParams);
     params.set("preset", nextRange.preset);
@@ -60,8 +94,12 @@ export function DashboardShell({ data }: { data: DashboardData }) {
     });
   };
 
-  const topCategory = data.categorySpend[0]?.category ?? "None";
-  const average = data.transactionCount > 0 ? data.total / data.transactionCount : 0;
+  const topCategory = categorySpend[0]?.category ?? "None";
+  const average = visibleTransactions.length > 0 ? total / visibleTransactions.length : 0;
+  const insights =
+    currentRange.start === data.range.start && currentRange.end === data.range.end
+      ? data.insights
+      : [];
 
   const statusText = useMemo(() => {
     if (!data.notion.categoryPropertyReady) {
@@ -81,7 +119,7 @@ export function DashboardShell({ data }: { data: DashboardData }) {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="mx-auto min-h-[100dvh] max-w-6xl px-4 py-16 sm:px-8 md:py-24 lg:px-12"
+      className="mx-auto min-h-[100dvh] px-4 py-16 sm:px-8 md:py-24 lg:px-12" // max-w-6xl
     >
       {/* Header */}
       <motion.header
@@ -100,9 +138,9 @@ export function DashboardShell({ data }: { data: DashboardData }) {
             <p className="mt-2 text-sm text-(--text-secondary)">
               Data from {data.notion.databaseName}
             </p>
-             · 
+            ·
             <span className="font-mono text-xs tabular-nums text-(--text-muted)">
-              {data.range.start} — {data.range.end}
+              {currentRange.start} — {currentRange.end}
             </span>
           </div>
           {/* <p className="mt-2 text-sm text-(--text-secondary)">
@@ -116,272 +154,138 @@ export function DashboardShell({ data }: { data: DashboardData }) {
 
       {/* Filter Toolbar */}
       <motion.div variants={itemVariants} className="mt-8">
-        <FilterToolbar
-          currentRange={data.range}
+        <DateRangeFilter
+          key={`${currentRange.preset}:${currentRange.start}:${currentRange.end}`}
+          currentRange={currentRange}
           isPending={isPending}
           onApply={applyRange}
         />
       </motion.div>
 
       {/* Status row: Ready + AI Status */}
-      <motion.section
-        variants={itemVariants}
-        className="mt-2 flex flex-row items-center gap-2"
-      >
-        {/* Load status */}
-        <div className="inline-flex items-center gap-3 border border-(--border) bg-(--surface) px-4 py-2 text-xs text-(--text-muted)">
-          <span
-            className={`h-2 w-2 ${
-              isPending ? "animate-pulse bg-(--accent)" : "bg-(--tag-green-text)"
-            }`}
-          />
-          <span className="font-medium text-(--text-secondary)">Data:</span>{" "}
-          {isPending ? "Loading…" : "Ready"}
-        </div>
-
-        {/* AI Status */}
-        <div className="w-full inline-flex items-center gap-3 border border-(--border) bg-(--surface) px-4 py-2 text-xs text-(--text-muted)">
-          <span
-            className={`h-2 w-2 ${
-              statusActive ? "bg-(--tag-green-text)" : "bg-(--text-muted)"
-            }`}
-          />
-          <span className="font-medium text-(--text-secondary)">AI status:</span>{" "}
-          {statusText}
-        </div>
+      <motion.section variants={itemVariants} className="mt-2 flex flex-row items-center gap-2">
+        <StatusIndicator
+          active={!isPending}
+          label="Data"
+          loading={isPending}
+          value={isPending ? "Loading…" : "Ready"}
+        />
+        <StatusIndicator active={statusActive} fill label="AI status" value={statusText} />
       </motion.section>
 
       {/* Metrics — asymmetric bento */}
-      <motion.section variants={itemVariants} className="mt-8 grid gap-4 md:grid-cols-[1.5fr_1fr]">
-        <MetricLarge label="Total spend" value={numberFormatter.format(Math.round(data.total))} />
-        <div className="flex flex-col gap-4">
-          <MetricSmall label="Transactions" value={numberFormatter.format(data.transactionCount)} currency="" />
-          <MetricSmall label="Average" value={numberFormatter.format(Math.round(average))} />
-        </div>
+      <motion.section variants={itemVariants} className="mt-8 grid md:grid-cols-3 gap-8">
+        <MetricCard
+          label="Total spend"
+          value={numberFormatter.format(Math.round(total))}
+        />
+        {/* <div className="flex flex-col gap-4">
+        </div> */}
+          <MetricCard
+            label="Transactions"
+            value={numberFormatter.format(visibleTransactions.length)}
+            currency=""
+          />
+          <MetricCard label="Average" value={numberFormatter.format(Math.round(average))} />
       </motion.section>
 
       {/* AI Insights */}
-      {data.insights.length > 0 && (
+      {insights.length > 0 && (
         <motion.section variants={itemVariants} className="mt-8">
-          <InsightsPanel insights={data.insights} />
+          <InsightsPanel insights={insights} />
         </motion.section>
       )}
 
       {/* Daily Spend */}
-      <motion.section
-        variants={itemVariants}
-        className="mt-8 border border-(--border) bg-(--surface) p-1"
-      >
-        <div className="flex flex-col gap-3 p-5 pb-2 sm:flex-row sm:items-center sm:justify-between sm:p-6 sm:pb-3">
-          <div>
-            <h2 className="text-xl font-normal tracking-tight text-(--text)">
-              Daily spend
-            </h2>
-            <p className="mt-1 text-sm text-(--text-secondary)">
-              Each day represented as one column.
-            </p>
-          </div>
-          <span className="inline-flex items-center gap-2 bg-(--tag-green-bg) px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-(--tag-green-text)">
-            Top: {topCategory}
-          </span>
-        </div>
-        <div className="px-4 pb-4 sm:px-5 sm:pb-5">
-          <DailyColumnChart data={data.dailySpend} />
-        </div>
-      </motion.section>
+      <motion.div variants={itemVariants} className="mt-8">
+        <DashboardPanel
+          action={
+            <span className="inline-flex items-center gap-2 bg-(--tag-green-bg) px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-(--tag-green-text)">
+              Top: {topCategory}
+            </span>
+          }
+          description="Each day represented as one column."
+          title="Daily spend"
+        >
+          <DailyColumnChart data={dailySpend} />
+        </DashboardPanel>
+      </motion.div>
 
       {/* Bottom Grid: Budgets + Category | Transactions */}
       <motion.section
         variants={itemVariants}
-        className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-stretch"
+        className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_480px] lg:items-stretch"
       >
         <div className="flex flex-col gap-8">
           {/* Category split */}
-          <div className="border border-(--border) bg-(--surface) p-5 sm:p-6">
-            <h2 className="text-xl font-normal tracking-tight text-(--text)">
-              Category split
-            </h2>
-            <p className="mt-1 text-sm text-(--text-secondary)">
-              Breakdown based on the Notion{" "}
-              <code className="bg-(--accent-dim) px-1.5 py-0.5 font-mono text-xs text-(--accent)">
-                Category
-              </code>{" "}
-              property.
-            </p>
-            <div className="mt-5">
-              <CategoryPieChart data={data.categorySpend} />
-            </div>
-          </div>
-          
+          <DashboardPanel
+            contentClassName="mt-5 p-0 sm:p-0"
+            description={
+              <>
+                Breakdown based on the Notion{" "}
+                <code className="bg-(--accent-dim) px-1.5 py-0.5 font-mono text-xs text-(--accent)">
+                  Category
+                </code>{" "}
+                property.
+              </>
+            }
+            headerClassName="p-0 sm:p-0"
+            title="Category split"
+          >
+            <CategoryPieChart data={categorySpend} />
+          </DashboardPanel>
+
           {/* Budgets */}
-          {data.budgets.some((b) => b.budget > 0) && (
-            <div className="border border-(--border) bg-(--surface) p-5 sm:p-6 h-full">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-normal tracking-tight text-(--text)">
-                    Budgets
-                  </h2>
-                  <p className="mt-1 text-sm text-(--text-secondary)">
-                    Spend against monthly limits.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-5">
-                <BudgetBars budgets={data.budgets} />
-              </div>
-            </div>
+          {budgets.some((b) => b.budget > 0) && (
+            <DashboardPanel
+              className="h-full"
+              contentClassName="mt-5 p-0 sm:p-0"
+              description="Spend against monthly limits."
+              headerClassName="p-0 sm:p-0"
+              title="Budgets"
+            >
+              <BudgetBars budgets={budgets} />
+            </DashboardPanel>
           )}
         </div>
 
         {/* Transaction Explorer */}
-        <aside className="flex h-full flex-col border border-(--border) bg-(--surface) p-5 sm:p-6">
-          <h2 className="text-xl font-normal tracking-tight text-(--text)">
-            Transactions
-          </h2>
-          <div className="mt-5 min-h-0 flex-1">
-            <TransactionExplorer transactions={data.allTransactions} />
-          </div>
-        </aside>
+        <DashboardPanel
+          as="aside"
+          className="flex h-full flex-col"
+          contentClassName="mt-5 min-h-0 flex-1 p-0 sm:p-0"
+          headerClassName="p-0 sm:p-0"
+          title="Transactions"
+        >
+          <TransactionExplorer transactions={visibleTransactions} />
+        </DashboardPanel>
       </motion.section>
     </motion.main>
   );
 }
 
-function FilterToolbar({
-  currentRange,
-  isPending,
-  onApply,
-}: {
-  currentRange: DateRange;
-  isPending: boolean;
-  onApply: (range: DateRange) => void;
-}) {
-  const [draft, setDraft] = useState<DateRange>(currentRange);
+function deriveBudgets(
+  budgets: BudgetItem[],
+  categorySpend: DashboardData["categorySpend"],
+): BudgetItem[] {
+  return budgets.map((budget) => {
+    const spent = categorySpend.find((item) => item.category === budget.category)?.amount ?? 0;
+    const { status, percent } = getClientBudgetStatus(spent, budget.budget);
 
-  const isCustom = draft.preset === "custom";
-
-  const setPreset = (preset: RangePreset) => {
-    setDraft({ preset, start: currentRange.start, end: currentRange.end });
-  };
-
-  const handleApply = () => {
-    onApply(draft);
-  };
-
-  const handleReset = () => {
-    setDraft(currentRange);
-  };
-
-  const hasChanges =
-    draft.preset !== currentRange.preset ||
-    draft.start !== currentRange.start ||
-    draft.end !== currentRange.end;
-
-  return (
-    <div className="border border-(--border) bg-(--surface) p-2 sm:p-3">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        {/* Left: presets + dates */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-          {/* Presets */}
-          <div className="inline-flex items-center gap-1 border border-(--border) bg-(--bg) p-0.5">
-            <Tabs.Root
-              onValueChange={(value) => setPreset(value as RangePreset)}
-              value={draft.preset}
-            >
-              <Tabs.List className="flex gap-1">
-                {presets.map((preset) => (
-                  <Tabs.Tab
-                    className="px-3 py-1.75 text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-active:bg-(--accent) data-active:text-white"
-                    key={preset.value}
-                    value={preset.value}
-                  >
-                    {preset.label}
-                  </Tabs.Tab>
-                ))}
-                <Tabs.Tab
-                  className="px-3 py-1.75 text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-active:bg-(--accent) data-active:text-white"
-                  value="custom"
-                >
-                  Custom
-                </Tabs.Tab>
-              </Tabs.List>
-            </Tabs.Root>
-          </div>
-
-          {/* Date inputs — shown only in Custom mode */}
-          {isCustom && (
-            <div className="flex items-end gap-2">
-              <input
-                className="h-11 appearance-none border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent)"
-                onChange={(event) =>
-                  setDraft({ preset: "custom", start: event.target.value, end: draft.end })
-                }
-                type="date"
-                value={draft.start}
-              />
-              <input
-                className="h-11 appearance-none border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent) -ml-px"
-                onChange={(event) =>
-                  setDraft({ preset: "custom", start: draft.start, end: event.target.value })
-                }
-                type="date"
-                value={draft.end}
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Right: CTAs */}
-        <div className="flex items-center gap-3">
-          {/* Reset */}
-          <button
-            onClick={handleReset}
-            disabled={!hasChanges || isPending}
-            className="h-11 border border-(--border) px-4 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:bg-(--surface-hover) hover:text-(--text-secondary) disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-(--text-muted) active:scale-[0.96]"
-            type="button"
-          >
-            Reset
-          </button>
-
-          {/* Apply */}
-          <button
-            onClick={handleApply}
-            disabled={!hasChanges || isPending}
-            className="h-11 bg-(--accent) px-5 text-[11px] font-medium uppercase tracking-wider text-white transition-colors hover:bg-(--accent)/90 disabled:opacity-40 active:scale-[0.96]"
-            type="button"
-          >
-            Apply
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+    return {
+      ...budget,
+      spent,
+      status,
+      percent,
+    };
+  });
 }
 
-function MetricLarge({ label, value, currency = "₫" }: { label: string; value: string; currency?: string }) {
-  return (
-    <div className="flex flex-col justify-between border border-(--border) bg-(--surface) p-6 sm:p-8">
-      <p className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
-        {label}
-      </p>
-      <p className="mt-8 font-mono text-5xl font-normal tracking-tight leading-none text-(--text) sm:text-6xl md:text-7xl">
-        {value}
-        <span className="text-2xl font-medium uppercase tracking-wider text-(--text-muted)">{currency}</span>
-      </p>
-    </div>
-  );
-}
+function getClientBudgetStatus(spent: number, budget: number) {
+  if (budget <= 0) return { status: "none" as const, percent: 0 };
 
-function MetricSmall({ label, value, currency = "₫" }: { label: string; value: string; currency?: string }) {
-  return (
-    <div className="flex flex-1 flex-col justify-center border border-(--border) bg-(--surface) p-6 sm:p-8">
-      <p className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
-        {label}
-      </p>
-      <p className="mt-4 font-mono text-4xl font-normal tracking-tight leading-tight text-(--text) sm:text-5xl">
-        {value}
-        <span className="text-base font-medium uppercase tracking-wider text-(--text-muted)">{currency}</span>
-      </p>
-    </div>
-  );
+  const percent = Math.min(100, Math.round((spent / budget) * 100));
+  if (spent > budget) return { status: "over" as const, percent };
+  if (percent >= 80) return { status: "warning" as const, percent };
+  return { status: "ok" as const, percent };
 }
