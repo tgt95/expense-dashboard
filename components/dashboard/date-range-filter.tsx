@@ -9,6 +9,9 @@ const presets: Array<{ value: Exclude<RangePreset, "custom">; label: string }> =
   { value: "last-week", label: "Last week" },
 ];
 
+const tabItemClassName = 'px-3 py-1.75 w-full md:w-auto text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-active:bg-(--accent) data-active:text-white'
+const inputClassName = "w-full md:w-auto h-11 appearance-none border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent)"
+
 export function DateRangeFilter({
   currentRange,
   isPending,
@@ -43,15 +46,16 @@ export function DateRangeFilter({
     <div className="border border-(--border) bg-(--surface) p-2 sm:p-3">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="inline-flex items-center gap-1 border border-(--border) bg-(--bg) p-0.5">
+          <div className="w-full md:w-auto inline-flex items-center gap-1 border border-(--border) bg-(--bg) p-0.5">
             <Tabs.Root
               onValueChange={(value) => setPreset(value as RangePreset)}
               value={draft.preset}
+              className='w-full md:w-auto'
             >
-              <Tabs.List className="flex gap-1">
+              <Tabs.List className="flex gap-1 w-full md:w-auto">
                 {presets.map((preset) => (
                   <Tabs.Tab
-                    className="px-3 py-1.75 text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-active:bg-(--accent) data-active:text-white"
+                    className={tabItemClassName}
                     key={preset.value}
                     value={preset.value}
                   >
@@ -59,7 +63,7 @@ export function DateRangeFilter({
                   </Tabs.Tab>
                 ))}
                 <Tabs.Tab
-                  className="px-3 py-1.75 text-[11px] font-medium tracking-wider text-(--text-muted) transition-colors hover:text-(--text-secondary) data-active:bg-(--accent) data-active:text-white"
+                  className={tabItemClassName}
                   value="custom"
                 >
                   Custom
@@ -69,9 +73,9 @@ export function DateRangeFilter({
           </div>
 
           {isCustom && (
-            <div className="flex items-end gap-2">
+            <div className="w-full md:w-auto flex items-end gap-2">
               <input
-                className="h-11 appearance-none border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent)"
+                className={inputClassName}
                 onChange={(event) =>
                   setDraft({ preset: "custom", start: event.target.value, end: draft.end })
                 }
@@ -79,7 +83,7 @@ export function DateRangeFilter({
                 value={draft.start}
               />
               <input
-                className="-ml-px h-11 appearance-none border border-(--border) bg-(--bg) px-3 text-sm text-(--text) outline-none transition-colors focus:border-(--accent)"
+                className={inputClassName}
                 onChange={(event) =>
                   setDraft({ preset: "custom", start: draft.start, end: event.target.value })
                 }
@@ -92,7 +96,7 @@ export function DateRangeFilter({
 
         <div className="flex items-center gap-3">
           <button
-            className="h-11 border border-(--border) px-4 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:bg-(--surface-hover) hover:text-(--text-secondary) disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-(--text-muted) active:scale-[0.96]"
+            className="w-full md:w-auto h-11 border border-(--border) px-4 text-[11px] font-medium uppercase tracking-wider text-(--text-muted) transition-colors hover:bg-(--surface-hover) hover:text-(--text-secondary) disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-(--text-muted) active:scale-[0.96]"
             disabled={!hasChanges || isPending}
             onClick={handleReset}
             type="button"
@@ -100,7 +104,7 @@ export function DateRangeFilter({
             Reset
           </button>
           <button
-            className="h-11 bg-(--accent) px-5 text-[11px] font-medium uppercase tracking-wider text-white transition-colors hover:bg-(--accent)/90 disabled:opacity-40 active:scale-[0.96]"
+            className="w-full md:w-auto h-11 bg-(--accent) px-5 text-[11px] font-medium uppercase tracking-wider text-white transition-colors hover:bg-(--accent)/90 disabled:opacity-40 active:scale-[0.96]"
             disabled={!hasChanges || isPending}
             onClick={handleApply}
             type="button"
