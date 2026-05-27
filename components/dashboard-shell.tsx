@@ -119,7 +119,7 @@ export function DashboardShell({ data }: { data: DashboardData }) {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="mx-auto min-h-[100dvh] px-4 py-16 sm:px-8 md:py-24 lg:px-12" // max-w-6xl
+      className="mx-auto max-w-6xl min-h-[100dvh] px-4 py-16 sm:px-8 md:py-24 lg:px-12" // max-w-6xl
     >
       {/* Header */}
       <motion.header
@@ -163,30 +163,37 @@ export function DashboardShell({ data }: { data: DashboardData }) {
       </motion.div>
 
       {/* Status row: Ready + AI Status */}
-      <motion.section variants={itemVariants} className="mt-2 flex flex-row items-center gap-2">
+      <motion.section
+        variants={itemVariants}
+        className="mt-2 flex flex-col sm:flex-row items-center gap-2"
+      >
         <StatusIndicator
+          className="w-full lg:max-w-56"
           active={!isPending}
           label="Data"
           loading={isPending}
           value={isPending ? "Loading…" : "Ready"}
         />
-        <StatusIndicator active={statusActive} fill label="AI status" value={statusText} />
+        <StatusIndicator
+          className="w-full"
+          active={statusActive}
+          fill
+          label="AI status"
+          value={statusText}
+        />
       </motion.section>
 
       {/* Metrics — asymmetric bento */}
-      <motion.section variants={itemVariants} className="mt-8 grid md:grid-cols-3 gap-8">
-        <MetricCard
-          label="Total spend"
-          value={numberFormatter.format(Math.round(total))}
-        />
+      <motion.section variants={itemVariants} className="mt-8 grid md:grid-cols-3 gap-4 md:gap-8">
+        <MetricCard label="Total spend" value={numberFormatter.format(Math.round(total))} />
         {/* <div className="flex flex-col gap-4">
         </div> */}
-          <MetricCard
-            label="Transactions"
-            value={numberFormatter.format(visibleTransactions.length)}
-            currency=""
-          />
-          <MetricCard label="Average" value={numberFormatter.format(Math.round(average))} />
+        <MetricCard
+          label="Transactions"
+          value={numberFormatter.format(visibleTransactions.length)}
+          currency=""
+        />
+        <MetricCard label="Average" value={numberFormatter.format(Math.round(average))} />
       </motion.section>
 
       {/* AI Insights */}
@@ -214,7 +221,7 @@ export function DashboardShell({ data }: { data: DashboardData }) {
       {/* Bottom Grid: Budgets + Category | Transactions */}
       <motion.section
         variants={itemVariants}
-        className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_480px] lg:items-stretch"
+        className="mt-8 gap-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_480px] lg:items-stretch"
       >
         <div className="flex flex-col gap-8">
           {/* Category split */}

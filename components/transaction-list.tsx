@@ -146,7 +146,7 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
       </div>
 
       {/* Sort + count toolbar */}
-      <div className="mt-3 flex items-center justify-between border-b border-(--border) pb-2">
+      <div className="-mx-5 mt-3 flex items-center justify-between border-b border-(--border) px-5 pb-2">
         <span className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
           {filtered.length} transaction{filtered.length !== 1 ? "s" : ""}
         </span>
@@ -175,7 +175,7 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
       </div>
 
       {/* List */}
-      <div className="mt-2 flex-1 overflow-y-auto pr-1 h-full" style={{ maxHeight: "480px" }}>
+      <div className="-mx-5 mt-2 flex-1 overflow-y-auto pr-1 h-full" style={{ maxHeight: "480px" }}>
         <AnimatePresence initial={false} mode="popLayout">
           {filtered.length > 0 ? (
             <dl className="flex flex-col">
@@ -191,7 +191,7 @@ export function TransactionExplorer({ transactions }: { transactions: PublicTran
                     duration: 0.3,
                     ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
                   }}
-                  className="group flex items-start justify-between gap-3 border-b border-(--border) py-3 transition-colors last:border-b-0 hover:bg-(--surface-hover)"
+                  className="group flex items-start justify-between gap-3 border-b border-(--border) py-3 px-3 transition-colors last:border-b-0 hover:bg-(--surface-hover)"
                 >
                   <div className="min-w-0 px-2">
                     <dt className="truncate text-sm font-medium text-(--text) transition-colors group-hover:text-(--accent)">

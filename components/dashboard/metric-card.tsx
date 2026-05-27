@@ -14,8 +14,8 @@ export function MetricCard({
     ? "flex flex-col justify-between border border-(--border) bg-(--surface) p-6 sm:p-8"
     : "flex flex-1 flex-col justify-center border border-(--border) bg-(--surface) p-6 sm:p-8";
   const valueClassName = isLarge
-    ? "mt-8 font-mono text-5xl font-normal tracking-tight leading-none text-(--text) sm:text-6xl md:text-7xl"
-    : "mt-2 font-mono text-4xl font-normal tracking-tight leading-tight text-(--text) sm:text-5xl";
+    ? "flex items-baseline gap-1 mt-8 font-mono text-5xl font-normal tracking-tighter leading-none text-(--text) sm:text-6xl md:text-7xl"
+    : "flex items-baseline gap-1 mt-2 font-mono text-3xl font-normal tracking-tighter leading-tight text-(--text) sm:text-4xl";
   const currencyClassName = isLarge
     ? "text-2xl font-medium uppercase tracking-wider text-(--text-muted)"
     : "text-base font-medium uppercase tracking-wider text-(--text-muted)";

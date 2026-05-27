@@ -64,7 +64,7 @@ export function DailyColumnChart({ data }: { data: DailySpend[] }) {
   return (
     <div className="h-80 w-full">
       <ResponsiveContainer height="100%" width="100%">
-        <BarChart data={data} margin={{ bottom: 8, left: 16, right: 10, top: 16 }}>
+        <BarChart data={data} margin={{ bottom: 8, left: 24, right: 24, top: 16 }}>
           <CartesianGrid
             stroke="var(--border)"
             strokeDasharray="3 3"
@@ -72,13 +72,15 @@ export function DailyColumnChart({ data }: { data: DailySpend[] }) {
             strokeOpacity={0.5}
           />
           <XAxis
-            axisLine={false}
+            stroke="var(--border)"
+            axisLine={true}
             dataKey="label"
             tick={{ fill: "var(--text-muted)", fontSize: 12, fontFamily: "var(--font-mono)" }}
             tickLine={false}
           />
           <YAxis
-            axisLine={false}
+            stroke="var(--border)"
+            axisLine={true}
             tick={{ fill: "var(--text-muted)", fontSize: 12, fontFamily: "var(--font-mono)" }}
             tickFormatter={(value) => numberFormatter.format(Number(value))}
             tickLine={false}
